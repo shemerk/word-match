@@ -1,6 +1,7 @@
 package com.wordmatch
 
 import com.wordmatch.game.AnswerVerifier
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -37,5 +38,11 @@ class AnswerVerifierTest {
         assertFalse(AnswerVerifier.isCorrect("dog", "cat"))
         assertFalse(AnswerVerifier.isCorrect("app", "apple"))
         assertFalse(AnswerVerifier.isCorrect("", "apple"))
+    }
+
+    @Test fun hintMasksAfterRevealedLetters() {
+        assertEquals("c__", AnswerVerifier.hint("A cat", 1))     // article stripped, first letter shown
+        assertEquals("ru_", AnswerVerifier.hint("To run", 2))
+        assertEquals("i_ __", AnswerVerifier.hint("It is", 1))   // spaces preserved
     }
 }

@@ -19,4 +19,20 @@ object AnswerVerifier {
         val firstToken = collapsed.substring(0, space)
         return if (firstToken in GameConfig.LEADING_ARTICLES) collapsed.substring(space + 1) else collapsed
     }
+
+    /**
+     * Masked hint for the (article-stripped) answer: first [reveal] letters shown, remaining letters
+     * become "_", spaces kept. e.g. hint("A cat", 1) = "c__", hint("It is", 1) = "i_ __".
+     */
+    fun hint(correctAnswer: String, reveal: Int = GameConfig.HINT_REVEAL_LETTERS): String {
+        val target = normalize(correctAnswer)
+        var shown = 0
+        return buildString {
+            for (ch in target) when {
+                ch == ' ' -> append(' ')
+                shown < reveal -> { append(ch); shown++ }
+                else -> append('_')
+            }
+        }
+    }
 }

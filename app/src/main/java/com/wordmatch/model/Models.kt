@@ -1,5 +1,7 @@
 package com.wordmatch.model
 
+import com.wordmatch.config.GameConfig
+
 /** One vocabulary pair. Defaults let Gson tolerate missing fields. */
 data class WordItem(
     val id: Int = 0,
@@ -13,15 +15,40 @@ data class JsonBinResponse(
     val record: List<WordItem> = emptyList()
 )
 
-enum class GameStatus { LOADING, READY, RESULT, FORFEIT, ERROR }
+/** Which top-level screen is showing. */
+enum class Screen { START, PLAYING, SUMMARY }
 
 data class GameState(
+    val screen: Screen = Screen.START,
+    val loading: Boolean = true,   // words still loading at app start
+    val error: Boolean = false,    // load failed with no words at all
+
+    // Start-screen selection
+    val categories: List<String> = emptyList(),   // available themes (excludes "all")
+    val category: String? = null,                 // null = all themes
+    val sessionSize: Int = GameConfig.DEFAULT_SESSION_SIZE,
+
+    // In-session play
     val currentWord: WordItem? = null,
     val streak: Int = 0,
     val score: Int = 0,
-    val wordsCompleted: Int = 0,
-    // null = no attempt yet, true/false = last check result. Wrong keeps input open for retry.
+    val lastGained: Int = 0,       // points from the most recent correct answer (base + streak bonus)
+    val wordsCompleted: Int = 0,   // finished words this session (0..sessionSize)
+    val correctCount: Int = 0,     // for accuracy on the summary
+    val bestStreakThisSession: Int = 0,
+    // null = no attempt yet, true/false = last check. Wrong keeps input open for retry.
     val isAnswerCorrect: Boolean? = null,
-    val showAnswer: Boolean = false,
-    val status: GameStatus = GameStatus.LOADING
-)
+    val forfeited: Boolean = false,
+    // Bumped on every check so the UI can re-fire confetti/shake even on a repeated result.
+    val checkNonce: Int = 0,
+
+    // Records for the CURRENT sessionSize bucket (persisted separately per size)
+    val bestScore: Int = 0,
+    val bestStreak: Int = 0,
+    val newRecord: Boolean = false,  // set on the summary when best score was beaten
+
+    val soundEnabled: Boolean = true
+) {
+    /** True while the current word is awaiting a first answer (not yet solved/forfeited). */
+    val awaitingAnswer: Boolean get() = isAnswerCorrect == null && !forfeited
+}

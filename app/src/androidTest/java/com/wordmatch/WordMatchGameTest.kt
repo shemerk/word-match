@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.gson.Gson
+import com.wordmatch.data.InMemoryScoreStore
 import com.wordmatch.data.WordRepository
 import com.wordmatch.game.GameViewModel
 import com.wordmatch.model.JsonBinResponse
@@ -28,8 +29,8 @@ import org.junit.runner.RunWith
  * words_test.json in androidTest/assets. Run on a device/emulator:
  *   ./gradlew connectedAndroidTest
  *
- * The word order is forced sequential (apple, cat, happy, house, water) via an injected picker,
- * so assertions on "the next word" are reproducible.
+ * Word order is forced sequential (apple, cat, happy, house, water, then it wraps) via an injected
+ * picker, so "next word" assertions are reproducible.
  */
 @RunWith(AndroidJUnit4::class)
 class WordMatchGameTest {
@@ -56,34 +57,38 @@ class WordMatchGameTest {
         return Gson().fromJson(json, JsonBinResponse::class.java).record
     }
 
-    /** Builds a ViewModel wired to the test words in a fixed, cycling order. */
     private fun buildViewModel(): GameViewModel {
         val words = loadTestWords()
         val sequential: (List<WordItem>, Int?) -> WordItem = { list, lastId ->
             val idx = list.indexOfFirst { it.id == lastId } // -1 when lastId == null -> first word
             list[(idx + 1) % list.size]
         }
-        return GameViewModel(FakeRepo(words), sound, sequential)
+        return GameViewModel(FakeRepo(words), sound, InMemoryScoreStore(), sequential)
     }
-
-    private fun setContent() = rule.setContent { MainScreen(buildViewModel()) }
 
     private fun ComposeContentTestRule.awaitText(text: String, timeoutMs: Long = 4000) {
         waitUntil(timeoutMs) { onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
         onNodeWithText(text).assertIsDisplayed()
     }
 
-    // 1: App loads and shows the first Hebrew word.
+    /** Set content, wait for the start screen, then begin a session (default: all words, size 10). */
+    private fun startGame() {
+        rule.setContent { MainScreen(buildViewModel()) }
+        rule.awaitText("התחל")
+        rule.onNodeWithText("התחל").performClick()
+    }
+
+    // 1: Start screen -> begin -> first Hebrew word shows.
     @Test
-    fun appLoadsAndShowsFirstWord() {
-        setContent()
+    fun beginsAndShowsFirstWord() {
+        startGame()
         rule.awaitText("תפוח")
     }
 
     // 2: Correct answer -> success, streak, points, sound, auto-advance to next word.
     @Test
     fun correctAnswerFlow() {
-        setContent()
+        startGame()
         rule.awaitText("תפוח")
         rule.onNodeWithTag("answerInput").performTextInput("apple")
         rule.onNodeWithText("בדוק").performClick()
@@ -96,20 +101,20 @@ class WordMatchGameTest {
         rule.awaitText("חתול") // auto-advance
     }
 
-    // 3: Answer accepted case-insensitively.
+    // 3: Case-insensitive answer.
     @Test
     fun caseInsensitiveAnswer() {
-        setContent()
+        startGame()
         rule.awaitText("תפוח")
         rule.onNodeWithTag("answerInput").performTextInput("APPLE")
         rule.onNodeWithText("בדוק").performClick()
         rule.onNodeWithText("✅ כל הכבוד!").assertIsDisplayed()
     }
 
-    // 4: Surrounding whitespace is trimmed.
+    // 4: Surrounding whitespace trimmed.
     @Test
     fun whitespaceTrimmed() {
-        setContent()
+        startGame()
         rule.awaitText("תפוח")
         rule.onNodeWithTag("answerInput").performTextInput("  apple  ")
         rule.onNodeWithText("בדוק").performClick()
@@ -119,7 +124,7 @@ class WordMatchGameTest {
     // 5: Wrong answer -> error, streak reset, no points, sound, input stays for retry.
     @Test
     fun wrongAnswerFlow() {
-        setContent()
+        startGame()
         rule.awaitText("תפוח")
         rule.onNodeWithTag("answerInput").performTextInput("banana")
         rule.onNodeWithText("בדוק").performClick()
@@ -134,7 +139,7 @@ class WordMatchGameTest {
     // 6: Retry after a wrong answer succeeds.
     @Test
     fun retryAfterWrong() {
-        setContent()
+        startGame()
         rule.awaitText("תפוח")
         rule.onNodeWithTag("answerInput").performTextInput("banana")
         rule.onNodeWithText("בדוק").performClick()
@@ -151,9 +156,9 @@ class WordMatchGameTest {
     // 7: Forfeit -> reveal English answer, no penalty, "Got it" advances.
     @Test
     fun forfeitFlow() {
-        setContent()
+        startGame()
         rule.awaitText("תפוח")
-        rule.onNodeWithText("הפקר").performClick()
+        rule.onNodeWithText("מוותר").performClick()
 
         rule.onNodeWithText("התשובה היתה: apple").assertIsDisplayed()
         rule.onNodeWithText("🔥 0").assertIsDisplayed()
@@ -163,47 +168,23 @@ class WordMatchGameTest {
         rule.awaitText("חתול")
     }
 
-    // 8: Full 5-word session mixing correct / wrong+retry / forfeit.
+    // 8: Full session of 10 words (5-word pool wraps once), all correct -> Summary + score 100.
     @Test
-    fun fullGameSession() {
-        setContent()
-
-        // apple (correct)
-        rule.awaitText("תפוח")
-        rule.onNodeWithTag("answerInput").performTextInput("apple")
-        rule.onNodeWithText("בדוק").performClick()
-        rule.onNodeWithText("✅ כל הכבוד!").assertIsDisplayed()
-
-        // cat (wrong then correct)
-        rule.awaitText("חתול")
-        rule.onNodeWithTag("answerInput").performTextInput("dog")
-        rule.onNodeWithText("בדוק").performClick()
-        rule.onNodeWithText("❌ עוד לא... נסה שוב").assertIsDisplayed()
-        rule.onNodeWithTag("answerInput").performTextClearance()
-        rule.onNodeWithTag("answerInput").performTextInput("cat")
-        rule.onNodeWithText("בדוק").performClick()
-        rule.onNodeWithText("✅ כל הכבוד!").assertIsDisplayed()
-
-        // happy (forfeit)
-        rule.awaitText("שמח")
-        rule.onNodeWithText("הפקר").performClick()
-        rule.onNodeWithText("התשובה היתה: happy").assertIsDisplayed()
-        rule.onNodeWithText("הבנתי!").performClick()
-
-        // house (correct)
-        rule.awaitText("בית")
-        rule.onNodeWithTag("answerInput").performTextInput("house")
-        rule.onNodeWithText("בדוק").performClick()
-        rule.onNodeWithText("✅ כל הכבוד!").assertIsDisplayed()
-
-        // water (correct)
-        rule.awaitText("מים")
-        rule.onNodeWithTag("answerInput").performTextInput("water")
-        rule.onNodeWithText("בדוק").performClick()
-        rule.onNodeWithText("✅ כל הכבוד!").assertIsDisplayed()
-
-        // 4 correct * 10 = 40; streak: apple1, cat reset->1, forfeit keeps, house2, water3.
-        rule.onNodeWithText("נקודות: 40").assertIsDisplayed()
-        rule.onNodeWithText("🔥 3").assertIsDisplayed()
+    fun fullSessionReachesSummary() {
+        // sequential order for size 10 over the 5 test words:
+        val order = listOf(
+            "תפוח" to "apple", "חתול" to "cat", "שמח" to "happy", "בית" to "house", "מים" to "water",
+            "תפוח" to "apple", "חתול" to "cat", "שמח" to "happy", "בית" to "house", "מים" to "water"
+        )
+        startGame()
+        order.forEach { (he, en) ->
+            rule.awaitText(he)
+            rule.onNodeWithTag("answerInput").performTextInput(en)
+            rule.onNodeWithText("בדוק").performClick()
+        }
+        rule.awaitText("סיום!")               // summary screen
+        // 10 correct: base 100 + capped streak bonuses (0,2,4,6,8,10,10,10,10,10) = 170
+        rule.onNodeWithText("170").assertIsDisplayed()
+        rule.onNodeWithText("🏆 שיא חדש!").assertIsDisplayed() // first record
     }
 }

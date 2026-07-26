@@ -48,6 +48,13 @@ android {
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
+
+    // Emit a fixed APK filename (learn-english.apk) for every variant.
+    applicationVariants.all {
+        outputs.all {
+            (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName = "learn-english.apk"
+        }
+    }
 }
 
 dependencies {
