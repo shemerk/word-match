@@ -1,0 +1,9 @@
+{
+  "record": [
+    { "id": 1, "english": "apple", "hebrew": "תפוח", "category": "fruits" },
+    { "id": 2, "english": "cat",   "hebrew": "חתול", "category": "animals" },
+    { "id": 3, "english": "happy", "hebrew": "שמח",  "category": "emotions" },
+    { "id": 4, "english": "house", "hebrew": "בית",  "category": "places" },
+    { "id": 5, "english": "water", "hebrew": "מים",  "category": "nature" }
+  ]
+}

@@ -1,0 +1,4 @@
+<resources>
+    <!-- Compose renders the UI; this base theme only provides a no-action-bar window. -->
+    <style name="Theme.WordMatch" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
