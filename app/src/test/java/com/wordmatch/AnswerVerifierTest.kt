@@ -34,6 +34,13 @@ class AnswerVerifierTest {
         assertFalse(AnswerVerifier.isCorrect("oren has cat", "Oren has a cat"))
     }
 
+    @Test fun punctuationTreatedAsSpace() {
+        assertTrue(AnswerVerifier.isCorrect("I live in Ramat Gan", "I live in Ramat-Gan"))
+        assertTrue(AnswerVerifier.isCorrect("ice cream", "ice-cream"))
+        assertTrue(AnswerVerifier.isCorrect("well, hello", "well hello"))
+        assertTrue(AnswerVerifier.isCorrect("black — white", "black white")) // em-dash
+    }
+
     @Test fun wrongAnswers() {
         assertFalse(AnswerVerifier.isCorrect("dog", "cat"))
         assertFalse(AnswerVerifier.isCorrect("app", "apple"))

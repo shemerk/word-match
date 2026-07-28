@@ -39,6 +39,12 @@ class GameViewModel(
     private var allWords: List<WordItem> = emptyList()
     private var pool: List<WordItem> = emptyList()   // words for the active session (filtered)
     private var lastWordId: Int? = null
+    // Words answered wrong this session; drawn at higher probability until solved (in-memory only).
+    private val missedIds = mutableSetOf<Int>()
+
+    /** Draw pool with missed words duplicated so they reappear sooner (see MISSED_WORD_WEIGHT). */
+    private fun weightedPool(): List<WordItem> =
+        pool.flatMap { w -> if (w.id in missedIds) List(GameConfig.MISSED_WORD_WEIGHT) { w } else listOf(w) }
 
     init { load() }
 
@@ -76,6 +82,7 @@ class GameViewModel(
         pool = if (s.category == null) allWords else allWords.filter { it.category == s.category }
         if (pool.isEmpty()) return
         lastWordId = null
+        missedIds.clear()
         _state.value = s.copy(
             screen = Screen.PLAYING,
             score = 0,
@@ -86,7 +93,7 @@ class GameViewModel(
             isAnswerCorrect = null,
             forfeited = false,
             newRecord = false,
-            currentWord = pickNext(pool, null).also { lastWordId = it.id }
+            currentWord = pickNext(weightedPool(), null).also { lastWordId = it.id }
         )
     }
 
@@ -100,6 +107,7 @@ class GameViewModel(
 
         if (AnswerVerifier.isCorrect(userAnswer, word.english)) {
             if (s.soundEnabled) sound.playCorrect()
+            missedIds -= word.id
             val newStreak = s.streak + 1
             // Base points + a capped bonus for the run already going (see GameConfig.streakBonus).
             val gained = GameConfig.POINTS_PER_CORRECT + GameConfig.streakBonus(s.streak)
@@ -118,6 +126,7 @@ class GameViewModel(
             }
         } else {
             if (s.soundEnabled) sound.playWrong()
+            missedIds += word.id
             _state.value = s.copy(isAnswerCorrect = false, streak = 0, checkNonce = s.checkNonce + 1)
         }
     }
@@ -144,7 +153,7 @@ class GameViewModel(
             endSession(completed)
             return
         }
-        val next = pickNext(pool, lastWordId)
+        val next = pickNext(weightedPool(), lastWordId)
         lastWordId = next.id
         _state.value = s.copy(
             currentWord = next,

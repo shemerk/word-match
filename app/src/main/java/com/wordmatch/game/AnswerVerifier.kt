@@ -13,7 +13,12 @@ object AnswerVerifier {
         normalize(userInput) == normalize(correctAnswer)
 
     fun normalize(raw: String): String {
-        val collapsed = raw.trim().lowercase(Locale.ENGLISH).replace(Regex("\\s+"), " ")
+        val collapsed = raw.lowercase(Locale.ENGLISH)
+            // Treat any punctuation / dash / em-dash as a space so "Ramat-Gan" == "Ramat Gan".
+            // Symmetric: normalize() runs on both sides. Note: also drops apostrophes (none in the
+            // current word list); map "'" to "" instead if contraction answers are ever added.
+            .replace(Regex("[^a-z0-9 ]"), " ")
+            .replace(Regex("\\s+"), " ").trim()
         val space = collapsed.indexOf(' ')
         if (space <= 0) return collapsed
         val firstToken = collapsed.substring(0, space)

@@ -23,10 +23,13 @@ class AndroidSoundManager(context: Context) : SoundManager {
         )
         .build()
 
-    private val correctId = pool.load(context, R.raw.success, 1)
+    // One success sound is picked at random per correct answer. Add another success_N.mp3 to
+    // res/raw and list it here to grow the pool (names must be lowercase, no dashes).
+    private val correctIds = listOf(R.raw.success, R.raw.success_1, R.raw.success_2, R.raw.success_3, R.raw.success_4)
+        .map { pool.load(context, it, 1) }
     private val wrongId = pool.load(context, R.raw.fail, 1)
 
-    override fun playCorrect() { pool.play(correctId, 1f, 1f, 1, 0, 1f) }
+    override fun playCorrect() { pool.play(correctIds.random(), 1f, 1f, 1, 0, 1f) }
     override fun playWrong() { pool.play(wrongId, 1f, 1f, 1, 0, 1f) }
 }
 

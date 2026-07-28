@@ -28,6 +28,11 @@ object GameConfig {
     /** Category chip shown for "all themes"; also the internal meaning of a null category. */
     const val CATEGORY_ALL = "all"
 
+    /** How many times a wrongly-answered word is entered into the draw pool while unsolved, making
+     *  it more likely to reappear until the child gets it right (in-memory, per session). 1 = no
+     *  weighting; 3 = a missed word is ~3x as likely as an unmissed one. */
+    const val MISSED_WORD_WEIGHT = 3
+
     /**
      * Leading words stripped from BOTH sides before comparing an English answer, so a child may
      * type "cat" for "A cat" or "run" for "To run". Only the first token is stripped; internal
