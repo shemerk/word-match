@@ -9,6 +9,7 @@ import com.wordmatch.R
 interface SoundManager {
     fun playCorrect()
     fun playWrong()
+    fun playLevelUp()
 }
 
 // ponytail: no release() — SoundPool lives for the app's single activity; the OS reclaims it on exit.
@@ -28,13 +29,16 @@ class AndroidSoundManager(context: Context) : SoundManager {
     private val correctIds = listOf(R.raw.success, R.raw.success_1, R.raw.success_2, R.raw.success_3, R.raw.success_4)
         .map { pool.load(context, it, 1) }
     private val wrongId = pool.load(context, R.raw.fail, 1)
+    private val levelUpId = pool.load(context, R.raw.level_up, 1)
 
     override fun playCorrect() { pool.play(correctIds.random(), 1f, 1f, 1, 0, 1f) }
     override fun playWrong() { pool.play(wrongId, 1f, 1f, 1, 0, 1f) }
+    override fun playLevelUp() { pool.play(levelUpId, 1f, 1f, 1, 0, 1f) }
 }
 
 /** No-op for tests / silent mode. */
 class NoOpSoundManager : SoundManager {
     override fun playCorrect() {}
     override fun playWrong() {}
+    override fun playLevelUp() {}
 }

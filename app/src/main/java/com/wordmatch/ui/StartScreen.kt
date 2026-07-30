@@ -20,6 +20,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -28,11 +33,14 @@ import androidx.compose.ui.unit.sp
 import com.wordmatch.config.GameConfig
 import com.wordmatch.game.GameViewModel
 import com.wordmatch.model.GameState
-import com.wordmatch.ui.theme.WarmGray
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StartScreen(state: GameState, viewModel: GameViewModel, onSettings: () -> Unit) {
+    // Show the name/jersey prompt automatically the first time (no name yet), or when the child taps ✎.
+    var showPlayerSetup by remember { mutableStateOf(false) }
+    LaunchedEffect(state.playerName) { if (state.playerName.isBlank()) showPlayerSetup = true }
+
     Column(
         modifier = Modifier.fillMaxSize().padding(20.dp).verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -51,19 +59,11 @@ fun StartScreen(state: GameState, viewModel: GameViewModel, onSettings: () -> Un
             )
         }
 
-        Spacer(Modifier.height(8.dp))
-        Text(Ui.PICK, fontSize = GameConfig.FONT_INSTRUCTION_SP.sp, color = WarmGray)
+        // The trophy case — primary payoff surface (took the space the category chips used to hold).
+        Spacer(Modifier.height(12.dp))
+        MascotTrophyCase(state, onEditPlayer = { showPlayerSetup = true })
 
         Spacer(Modifier.height(24.dp))
-        SectionLabel(Ui.CATEGORY_LABEL)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SelectChip(Ui.CATEGORY_ALL, selected = state.category == null) { viewModel.setCategory(null) }
-            state.categories.forEach { cat ->
-                SelectChip(Ui.categoryLabel(cat), selected = state.category == cat) { viewModel.setCategory(cat) }
-            }
-        }
-
-        Spacer(Modifier.height(20.dp))
         SectionLabel(Ui.SIZE_LABEL)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             GameConfig.SESSION_SIZES.forEach { size ->
@@ -86,6 +86,19 @@ fun StartScreen(state: GameState, viewModel: GameViewModel, onSettings: () -> Un
         ) {
             Text(Ui.START, fontSize = GameConfig.FONT_BUTTON_SP.sp, fontWeight = FontWeight.Bold)
         }
+    }
+
+    if (showPlayerSetup) {
+        PlayerSetupDialog(
+            currentName = state.playerName,
+            currentJersey = state.jerseyColor,
+            onSave = { name, jersey ->
+                viewModel.setPlayerName(name)
+                viewModel.setJerseyColor(jersey)
+                showPlayerSetup = false
+            },
+            onDismiss = { showPlayerSetup = false }
+        )
     }
 }
 

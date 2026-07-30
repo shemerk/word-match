@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -43,8 +44,10 @@ class WordMatchGameTest {
     private class CountingSound : SoundManager {
         var correct = 0
         var wrong = 0
+        var levelUp = 0
         override fun playCorrect() { correct++ }
         override fun playWrong() { wrong++ }
+        override fun playLevelUp() { levelUp++ }
     }
 
     private class FakeRepo(private val words: List<WordItem>) : WordRepository {
@@ -63,7 +66,9 @@ class WordMatchGameTest {
             val idx = list.indexOfFirst { it.id == lastId } // -1 when lastId == null -> first word
             list[(idx + 1) % list.size]
         }
-        return GameViewModel(FakeRepo(words), sound, InMemoryScoreStore(), sequential)
+        // Pre-set a player name so the first-run name/jersey dialog doesn't auto-open over the UI.
+        val store = InMemoryScoreStore().apply { setPlayerName("טסט") }
+        return GameViewModel(FakeRepo(words), sound, store, sequential)
     }
 
     private fun ComposeContentTestRule.awaitText(text: String, timeoutMs: Long = 4000) {
@@ -74,8 +79,9 @@ class WordMatchGameTest {
     /** Set content, wait for the start screen, then begin a session (default: all words, size 10). */
     private fun startGame() {
         rule.setContent { MainScreen(buildViewModel()) }
-        rule.awaitText("התחל")
-        rule.onNodeWithText("התחל").performClick()
+        // Wait for the button to exist, then scroll it into view (the trophy case sits above it).
+        rule.waitUntil(4000) { rule.onAllNodesWithText("התחל").fetchSemanticsNodes().isNotEmpty() }
+        rule.onNodeWithText("התחל").performScrollTo().performClick()
     }
 
     // 1: Start screen -> begin -> first Hebrew word shows.

@@ -9,7 +9,7 @@ internal object Ui {
 
     // Start screen
     const val TITLE = "וורדמץ׳"
-    const val PICK = "בחר נושא ומספר מילים"
+    const val PICK = "בחר מספר מילים"
     const val CATEGORY_LABEL = "נושא"
     const val CATEGORY_ALL = "הכל"
     const val SIZE_LABEL = "מספר מילים"
@@ -64,6 +64,42 @@ internal object Ui {
     fun progress(done: Int, total: Int): String = "$done/$total"
 
     fun scoreToBeat(best: Int): String = if (best <= 0) NO_RECORD else "$BEST_TO_BEAT$best"
+
+    // ---- Mascot ----
+
+    const val LEVEL_UP = "עלית רמה!"
+    const val NAME_PROMPT_TITLE = "איך קוראים לשחקן שלך?"
+    const val NAME_PLACEHOLDER = "השם שלך"
+    const val NAME_SAVE = "שמור"
+    const val JERSEY_LABEL = "צבע הקבוצה"
+    const val EDIT_PLAYER = "✎" // tap the name to rename / recolour
+
+    /** Rank title per tier (index = clamped level-1). Escalates with the sprite; see MASCOT_SPEC §5. */
+    private val MASCOT_TITLES = listOf("מתחיל", "שחקן מגרש", "כוכב עולה", "קפטן", "אלוף")
+
+    /** Short Hebrew name of what you unlock by REACHING level 2,3,4,5 (index = targetLevel-2). */
+    private val MASCOT_REWARDS = listOf("נעליים", "מדים מלאים", "כפפות", "גביע")
+
+    /** Rank title for a level; past the top art tier it gains prestige stars (capped in config). */
+    fun rankTitle(level: Int): String {
+        val base = MASCOT_TITLES[(level - 1).coerceIn(0, MASCOT_TITLES.lastIndex)]
+        val stars = (level - MASCOT_TITLES.size).coerceIn(0, GameConfig.MASCOT_MAX_STARS)
+        return if (stars > 0) "$base ${"⭐".repeat(stars)}" else base
+    }
+
+    /** Teaser under the mascot naming the next reward (or the next prestige star at the top tier). */
+    fun nextUnlock(level: Int, pointsToNext: Int): String {
+        val targetLevel = level + 1
+        return if (targetLevel <= MASCOT_TITLES.size)
+            "עוד $pointsToNext נקודות ל${MASCOT_REWARDS[targetLevel - 2]}"
+        else
+            "עוד $pointsToNext נקודות לכוכב!"
+    }
+
+    fun levelLabel(level: Int): String = "רמה $level"
+
+    /** Greeting line above the mascot once a name is set. */
+    fun playerGreeting(name: String): String = if (name.isBlank()) "" else name
 
     init { require(GameConfig.DEFAULT_SESSION_SIZE in GameConfig.SESSION_SIZES) }
 }

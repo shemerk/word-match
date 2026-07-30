@@ -1,5 +1,6 @@
 package com.wordmatch
 
+import com.wordmatch.config.GameConfig
 import com.wordmatch.data.InMemoryScoreStore
 import com.wordmatch.data.WordRepository
 import com.wordmatch.game.GameViewModel
@@ -34,9 +35,10 @@ class GameViewModelTest {
     }
 
     private class CountingSound : SoundManager {
-        var correct = 0; var wrong = 0
+        var correct = 0; var wrong = 0; var levelUp = 0
         override fun playCorrect() { correct++ }
         override fun playWrong() { wrong++ }
+        override fun playLevelUp() { levelUp++ }
     }
 
     // Deterministic order: next word after lastId in list order (wraps).
@@ -167,6 +169,34 @@ class GameViewModelTest {
         vm.forfeit(); vm.acknowledgeForfeit(); advanceUntilIdle()
         assertFalse(vm.state.value.newRecord)
         assertEquals(22, store.bestScore(2))
+    }
+
+    @Test fun correctAnswerAddsLifetimePointsAndDetectsLevelUp() = runTest {
+        // Seed just below the first threshold so one correct answer (apple, +10) crosses it.
+        val store = InMemoryScoreStore().apply { addPoints(GameConfig.LEVEL_BASE_COST - 10) }
+        val snd = CountingSound()
+        val vm = GameViewModel(FakeRepo(listOf(apple, cat)), snd, store, sequential)
+        advanceUntilIdle()
+        vm.setSessionSize(10); vm.startSession()
+        vm.checkAnswer("apple") // +10 -> exactly BASE -> crosses into level 2
+        val s = vm.state.value
+        assertEquals(GameConfig.LEVEL_BASE_COST, store.totalPoints())
+        assertEquals(2, s.level)
+        assertEquals(1, snd.levelUp)      // level-up fanfare fired once
+        assertEquals(1, s.levelUpNonce)   // UI moment armed
+    }
+
+    @Test fun lifetimePointsAccumulateWithoutSpuriousLevelUps() = runTest {
+        val store = InMemoryScoreStore()
+        val snd = CountingSound()
+        val vm = GameViewModel(FakeRepo(listOf(apple, cat)), snd, store, sequential)
+        advanceUntilIdle()
+        vm.setSessionSize(2); vm.startSession()
+        vm.checkAnswer("apple"); advanceUntilIdle() // +10
+        vm.checkAnswer("cat"); advanceUntilIdle()   // +12 -> total 22, still below BASE
+        assertEquals(22, store.totalPoints())
+        assertEquals(1, vm.state.value.level) // 22 < BASE -> no level-up
+        assertEquals(0, snd.levelUp)
     }
 
     @Test fun soundGatedByPreference() = runTest {

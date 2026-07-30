@@ -113,4 +113,98 @@ object GameConfig {
 
     /** "Best to beat" / record labels. */
     const val FONT_RECORD_SP = 16
+
+    // ---- Mascot (soccer player that levels up on lifetime points) ----
+
+    /** Points needed for the first level-up (level 1 -> 2). Tuned so the mascot is a LONG-term loop:
+     *  a good 10-word session earns ~100-170 pts, so the top art tier takes ~10 sessions, not one. */
+    const val LEVEL_BASE_COST = 100
+
+    /** Each level costs this many times the previous one (2 = the cost doubles every level:
+     *  100, 200, 400, 800…; cumulative thresholds 0, 100, 300, 700, 1500, 3100…). Must be >= 2. */
+    const val LEVEL_GROWTH = 2
+
+    /** Number of distinct sprite/title tiers that have art. levelFor keeps climbing past this
+     *  (extra levels show the top sprite + prestige stars), but the drawable/title clamps here.
+     *  Add art + a title row and bump this to extend. */
+    const val MASCOT_TIER_COUNT = 5
+
+    /** Prestige stars shown next to the top rank are capped here so the title can't overflow. */
+    const val MASCOT_MAX_STARS = 9
+
+    /**
+     * Team-colour choices for the jersey picker, as ARGB longs (Compose Color takes a Long).
+     * This colours the nameplate / frame / progress bar — NOT the sprite (avoids tier×colour art).
+     * Index is stored via ScoreStore.jerseyColor(). Order is the swatch order shown to the child.
+     */
+    val JERSEY_COLORS = listOf(
+        0xFFE53935L, // red
+        0xFF1E88E5L, // blue
+        0xFF43A047L, // green
+        0xFFFDD835L  // yellow
+    )
+
+    /** Big mascot sprite on the start-screen trophy case (dp, square). */
+    const val MASCOT_BIG_DP = 160
+
+    /** Compact mascot avatar in the game-screen header (dp, square). */
+    const val MASCOT_COMPACT_DP = 40
+
+    /** Thumbnail size of each tier in the start-screen "shelf" row (dp, square). */
+    const val MASCOT_SHELF_DP = 44
+
+    /** Scale the avatar bounces to on a correct answer / level-up (1.0 = no bounce). */
+    const val MASCOT_BOUNCE_SCALE = 1.35f
+
+    /** How long the "עלית רמה!" level-up banner stays up (ms). */
+    const val LEVEL_UP_BANNER_MS = 1800L
+
+    /** Rank title on the start-screen trophy case. */
+    const val FONT_RANK_TITLE_SP = 26
+
+    /** "עוד N נקודות ל…" next-unlock teaser under the mascot. */
+    const val FONT_MASCOT_TEASER_SP = 16
+
+    /** "עלית רמה!" level-up banner. */
+    const val FONT_LEVEL_UP_SP = 28
+
+    /** The child's player name shown above the mascot. */
+    const val FONT_PLAYER_NAME_SP = 22
+
+    /** Small level number badge on the compact header avatar. */
+    const val FONT_LEVEL_BADGE_SP = 13
+
+    /**
+     * Level (1-based) for a given lifetime point total. Level 1 = [0, BASE), level 2 =
+     * [BASE, BASE+BASE*GROWTH), … Uncapped: a huge total returns a large level (art clamps, not this).
+     */
+    fun levelFor(totalPoints: Int): Int {
+        var level = 1
+        var cost = LEVEL_BASE_COST
+        var remaining = totalPoints
+        while (remaining >= cost) {
+            remaining -= cost
+            cost *= LEVEL_GROWTH
+            level++
+        }
+        return level
+    }
+
+    /** Points earned inside the current level, and the points that level needs, for a progress bar.
+     *  e.g. total 45 -> (15 into this level, of 40 needed). */
+    fun levelProgress(totalPoints: Int): Pair<Int, Int> {
+        var cost = LEVEL_BASE_COST
+        var remaining = totalPoints
+        while (remaining >= cost) {
+            remaining -= cost
+            cost *= LEVEL_GROWTH
+        }
+        return remaining to cost
+    }
+
+    /** Points still needed to reach the next level from a given total. */
+    fun pointsToNextLevel(totalPoints: Int): Int {
+        val (into, need) = levelProgress(totalPoints)
+        return need - into
+    }
 }

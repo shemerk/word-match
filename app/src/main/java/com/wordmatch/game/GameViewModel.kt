@@ -57,6 +57,7 @@ class GameViewModel(
                 val categories = allWords.map { it.category }.filter { it.isNotBlank() }.distinct().sorted()
                 _state.value = _state.value.copy(loading = false, categories = categories)
                 refreshRecords()
+                refreshMascot()
             }
         }
     }
@@ -75,6 +76,30 @@ class GameViewModel(
     private fun refreshRecords() {
         val size = _state.value.sessionSize
         _state.value = _state.value.copy(bestScore = store.bestScore(size), bestStreak = store.bestStreak(size))
+    }
+
+    /** Recompute mascot fields from the store (lifetime points may have changed while playing). */
+    private fun refreshMascot() {
+        val total = store.totalPoints()
+        val (into, need) = GameConfig.levelProgress(total)
+        _state.value = _state.value.copy(
+            totalPoints = total,
+            level = GameConfig.levelFor(total),
+            levelInto = into,
+            levelNeed = need,
+            playerName = store.playerName(),
+            jerseyColor = store.jerseyColor()
+        )
+    }
+
+    fun setPlayerName(name: String) {
+        store.setPlayerName(name)
+        _state.value = _state.value.copy(playerName = name)
+    }
+
+    fun setJerseyColor(index: Int) {
+        store.setJerseyColor(index)
+        _state.value = _state.value.copy(jerseyColor = index)
     }
 
     fun startSession() {
@@ -111,6 +136,15 @@ class GameViewModel(
             val newStreak = s.streak + 1
             // Base points + a capped bonus for the run already going (see GameConfig.streakBonus).
             val gained = GameConfig.POINTS_PER_CORRECT + GameConfig.streakBonus(s.streak)
+
+            // Lifetime mascot points: add, then detect a level-up by comparing before/after.
+            store.addPoints(gained)
+            val total = store.totalPoints()
+            val newLevel = GameConfig.levelFor(total)
+            val leveledUp = newLevel > s.level
+            val (into, need) = GameConfig.levelProgress(total)
+            if (leveledUp && s.soundEnabled) sound.playLevelUp()
+
             _state.value = s.copy(
                 isAnswerCorrect = true,
                 streak = newStreak,
@@ -118,7 +152,12 @@ class GameViewModel(
                 score = s.score + gained,
                 lastGained = gained,
                 correctCount = s.correctCount + 1,
-                checkNonce = s.checkNonce + 1
+                checkNonce = s.checkNonce + 1,
+                totalPoints = total,
+                level = newLevel,
+                levelInto = into,
+                levelNeed = need,
+                levelUpNonce = if (leveledUp) s.levelUpNonce + 1 else s.levelUpNonce
             )
             viewModelScope.launch {
                 delay(GameConfig.AUTO_ADVANCE_CORRECT_MS)
@@ -141,6 +180,7 @@ class GameViewModel(
     fun exitGame() {
         _state.value = _state.value.copy(screen = Screen.START)
         refreshRecords()
+        refreshMascot()
     }
 
     /** "Got it!" after a forfeit reveal. */
@@ -184,6 +224,7 @@ class GameViewModel(
     fun backToStart() {
         _state.value = _state.value.copy(screen = Screen.START)
         refreshRecords()
+        refreshMascot()
     }
 
     // ---- Settings ----

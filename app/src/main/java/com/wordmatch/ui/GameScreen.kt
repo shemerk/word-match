@@ -131,6 +131,7 @@ fun GameScreen(state: GameState, viewModel: GameViewModel) {
             }
         }
         ConfettiOverlay(confetti.value)
+        LevelUpBanner(state.levelUpNonce)
     }
 }
 
@@ -148,6 +149,7 @@ private fun HeaderStats(state: GameState, reducedMotion: Boolean) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        MascotBadge(state, reducedMotion)
         Text(
             "🔥 ${state.streak}",
             modifier = Modifier

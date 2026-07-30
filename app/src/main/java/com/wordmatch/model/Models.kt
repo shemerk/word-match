@@ -47,7 +47,17 @@ data class GameState(
     val bestStreak: Int = 0,
     val newRecord: Boolean = false,  // set on the summary when best score was beaten
 
-    val soundEnabled: Boolean = true
+    val soundEnabled: Boolean = true,
+
+    // Mascot — lifetime progress, recomputed from ScoreStore on START and after each correct answer.
+    val totalPoints: Int = 0,
+    val level: Int = 1,
+    val levelInto: Int = 0,   // points earned inside the current level (progress bar numerator)
+    val levelNeed: Int = GameConfig.LEVEL_BASE_COST, // points the current level needs (denominator)
+    // Bumped only when a correct answer crosses into a new level, so the UI fires the level-up moment.
+    val levelUpNonce: Int = 0,
+    val playerName: String = "",  // "" = not chosen yet (StartScreen prompts)
+    val jerseyColor: Int = 0      // index into GameConfig.JERSEY_COLORS
 ) {
     /** True while the current word is awaiting a first answer (not yet solved/forfeited). */
     val awaitingAnswer: Boolean get() = isAnswerCorrect == null && !forfeited
