@@ -55,7 +55,7 @@ class GameViewModel(
                 _state.value = _state.value.copy(loading = false, error = true)
             } else {
                 val categories = allWords.map { it.category }.filter { it.isNotBlank() }.distinct().sorted()
-                _state.value = _state.value.copy(loading = false, categories = categories)
+                _state.value = _state.value.copy(loading = false, categories = categories, totalWords = allWords.size)
                 refreshRecords()
                 refreshMascot()
             }

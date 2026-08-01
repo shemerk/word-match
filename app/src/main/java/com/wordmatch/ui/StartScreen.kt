@@ -59,6 +59,17 @@ fun StartScreen(state: GameState, viewModel: GameViewModel, onSettings: () -> Un
             )
         }
 
+        // Word-bank size — how many words are available to learn.
+        if (state.totalWords > 0) {
+            Spacer(Modifier.height(6.dp))
+            Text(
+                Ui.wordBank(state.totalWords),
+                fontSize = GameConfig.FONT_RECORD_SP.sp,
+                color = MaterialTheme.colorScheme.secondary,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
         // The trophy case — primary payoff surface (took the space the category chips used to hold).
         Spacer(Modifier.height(12.dp))
         MascotTrophyCase(state, onEditPlayer = { showPlayerSetup = true })

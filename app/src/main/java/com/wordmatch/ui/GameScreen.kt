@@ -61,7 +61,8 @@ fun GameScreen(state: GameState, viewModel: GameViewModel) {
 
     // Answer + hint reset when the word changes; answer is kept on a wrong attempt for retry.
     var answer by remember(word?.id) { mutableStateOf("") }
-    var hint by remember(word?.id) { mutableStateOf<String?>(null) }
+    // Progressive hint: each tap reveals one more leading letter. 0 = not yet asked.
+    var hintReveal by remember(word?.id) { mutableStateOf(0) }
 
     // Result animations, re-fired on every check via checkNonce (suppressed when reduced motion).
     val confetti = remember { Animatable(0f) }
@@ -118,16 +119,22 @@ fun GameScreen(state: GameState, viewModel: GameViewModel) {
                         Text("+${state.lastGained} ${Ui.POINTS_WORD}", fontSize = GameConfig.FONT_STATS_SP.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
                     }
 
-                else -> AnswerArea(
+                else -> {
+                    val english = word?.english ?: ""
+                    // Never reveal the last letter, so a hint stays distinct from a forfeit.
+                    val maxReveal = (AnswerVerifier.letterCount(english) - 1).coerceAtLeast(1)
+                    AnswerArea(
                     answer = answer,
                     wrong = state.isAnswerCorrect == false,
                     shakeX = shakeX,
-                    hintText = hint,
-                    onHint = { hint = AnswerVerifier.hint(word?.english ?: "") },
+                    hintText = if (hintReveal > 0) AnswerVerifier.hint(english, hintReveal) else null,
+                    hintExhausted = hintReveal >= maxReveal,
+                    onHint = { hintReveal = (hintReveal + 1).coerceAtMost(maxReveal) },
                     onAnswerChange = { answer = it },
                     onCheck = { viewModel.checkAnswer(answer) },
                     onForfeit = viewModel::forfeit
                 )
+                }
             }
         }
         ConfettiOverlay(confetti.value)
@@ -206,6 +213,7 @@ private fun AnswerArea(
     wrong: Boolean,
     shakeX: Float,
     hintText: String?,
+    hintExhausted: Boolean,
     onHint: () -> Unit,
     onAnswerChange: (String) -> Unit,
     onCheck: () -> Unit,
@@ -229,9 +237,11 @@ private fun AnswerArea(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TextButton(onClick = onHint) { Text(Ui.HINT, fontSize = GameConfig.FONT_BUTTON_SP.sp) }
+        TextButton(onClick = onHint, enabled = !hintExhausted) { Text(Ui.HINT, fontSize = GameConfig.FONT_BUTTON_SP.sp) }
         if (hintText != null) {
-            Text("${Ui.HINT_PREFIX}$hintText", fontSize = GameConfig.FONT_INPUT_SP.sp, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
+            // ⁦..⁩ = LTR isolate: keeps the English mask left-to-right inside the RTL row,
+            // so the revealed first letter shows on the left instead of flipping to the far right.
+            Text("${Ui.HINT_PREFIX}⁦$hintText⁩", fontSize = GameConfig.FONT_INPUT_SP.sp, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
         }
     }
 

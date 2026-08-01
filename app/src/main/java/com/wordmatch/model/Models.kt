@@ -24,6 +24,7 @@ data class GameState(
     val error: Boolean = false,    // load failed with no words at all
 
     // Start-screen selection
+    val totalWords: Int = 0,                       // size of the whole loaded word bank
     val categories: List<String> = emptyList(),   // available themes (excludes "all")
     val category: String? = null,                 // null = all themes
     val sessionSize: Int = GameConfig.DEFAULT_SESSION_SIZE,

@@ -47,9 +47,10 @@ class AnswerVerifierTest {
         assertFalse(AnswerVerifier.isCorrect("", "apple"))
     }
 
-    @Test fun hintMasksAfterRevealedLetters() {
-        assertEquals("c__", AnswerVerifier.hint("A cat", 1))     // article stripped, first letter shown
-        assertEquals("ru_", AnswerVerifier.hint("To run", 2))
+    @Test fun hintRevealsOutsideIn() {
+        assertEquals("c__", AnswerVerifier.hint("A cat", 1))     // article stripped, first letter
+        assertEquals("c_t", AnswerVerifier.hint("A cat", 2))     // then last: first + last
+        assertEquals("r_n", AnswerVerifier.hint("To run", 2))
         assertEquals("i_ __", AnswerVerifier.hint("It is", 1))   // spaces preserved
     }
 }

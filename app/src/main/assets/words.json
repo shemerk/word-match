@@ -62,7 +62,7 @@
     { "id": 60, "hebrew": "מצחיק",           "english": "Funny",            "category": "adjectives" },
     { "id": 61, "hebrew": "רעב",             "english": "Hungry",           "category": "adjectives" },
     { "id": 62, "hebrew": "שמיים",           "english": "Sky",              "category": "nature" },
-    { "id": 63, "hebrew": "שט, לטוס",         "english": "To fly",           "category": "verbs" },
+    { "id": 63, "hebrew": "לטוס",         "english": "To fly",           "category": "verbs" },
     { "id": 64, "hebrew": "לבכות",           "english": "To cry",           "category": "verbs" },
     { "id": 65, "hebrew": "קופסה",           "english": "A box",            "category": "objects" },
     { "id": 66, "hebrew": "שועל",            "english": "A fox",            "category": "animals" },

@@ -65,6 +65,9 @@ internal object Ui {
 
     fun scoreToBeat(best: Int): String = if (best <= 0) NO_RECORD else "$BEST_TO_BEAT$best"
 
+    /** Start-screen badge: how many words are in the whole loaded bank. */
+    fun wordBank(total: Int): String = "📚 $total מילים ללמוד"
+
     // ---- Mascot ----
 
     const val LEVEL_UP = "עלית רמה!"
