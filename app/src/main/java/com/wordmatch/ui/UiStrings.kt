@@ -46,6 +46,7 @@ internal object Ui {
     const val SETTINGS_TITLE = "הגדרות"
     const val SOUND = "קול"
     const val RESET_SCORES = "אפס שיאים"
+    const val RESET_PROGRESS = "אפס רמה וניקוד כולל"
     const val CLOSE = "סגור"
 
     /** English category key -> Hebrew label. Falls back to the raw key if unmapped. */

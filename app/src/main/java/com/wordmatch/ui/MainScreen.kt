@@ -54,6 +54,7 @@ fun MainScreen(viewModel: GameViewModel, modifier: Modifier = Modifier) {
                 soundOn = state.soundEnabled,
                 onToggleSound = viewModel::toggleSound,
                 onReset = viewModel::resetScores,
+                onResetProgress = viewModel::resetProgress,
                 onClose = { showSettings = false }
             )
         }
@@ -75,6 +76,7 @@ private fun SettingsDialog(
     soundOn: Boolean,
     onToggleSound: () -> Unit,
     onReset: () -> Unit,
+    onResetProgress: () -> Unit,
     onClose: () -> Unit
 ) {
     AlertDialog(
@@ -94,6 +96,10 @@ private fun SettingsDialog(
                 Spacer(Modifier.height(12.dp))
                 OutlinedButton(onClick = onReset, modifier = Modifier.fillMaxWidth()) {
                     Text(Ui.RESET_SCORES)
+                }
+                Spacer(Modifier.height(8.dp))
+                OutlinedButton(onClick = onResetProgress, modifier = Modifier.fillMaxWidth()) {
+                    Text(Ui.RESET_PROGRESS)
                 }
             }
         }

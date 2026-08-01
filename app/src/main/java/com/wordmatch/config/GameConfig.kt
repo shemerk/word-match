@@ -117,11 +117,11 @@ object GameConfig {
     // ---- Mascot (soccer player that levels up on lifetime points) ----
 
     /** Points needed for the first level-up (level 1 -> 2). Tuned so the mascot is a LONG-term loop:
-     *  a good 10-word session earns ~100-170 pts, so the top art tier takes ~10 sessions, not one. */
-    const val LEVEL_BASE_COST = 100
+     *  a completed 100-word session earns ~1400-1970 pts, so the top art tier takes ~10 sessions, not one. */
+    const val LEVEL_BASE_COST = 1000
 
     /** Each level costs this many times the previous one (2 = the cost doubles every level:
-     *  100, 200, 400, 800…; cumulative thresholds 0, 100, 300, 700, 1500, 3100…). Must be >= 2. */
+     *  1000, 2000, 4000, 8000…; cumulative thresholds 0, 1000, 3000, 7000, 15000, 31000…). Must be >= 2. */
     const val LEVEL_GROWTH = 2
 
     /** Number of distinct sprite/title tiers that have art. levelFor keeps climbing past this

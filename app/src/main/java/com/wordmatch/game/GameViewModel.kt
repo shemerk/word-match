@@ -239,4 +239,10 @@ class GameViewModel(
         store.resetAll()
         refreshRecords()
     }
+
+    /** Wipe lifetime mascot progress: level back to 1, total earned points to 0. */
+    fun resetProgress() {
+        store.resetProgress()
+        refreshMascot()
+    }
 }
