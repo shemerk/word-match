@@ -9,6 +9,14 @@ object GameConfig {
     /** Base points added per correct answer (before any streak bonus). */
     const val POINTS_PER_CORRECT = 10
 
+    /** Points deducted from the base reward per hint tap on the current word (streak bonus is not
+     *  penalized). e.g. base 10, 2 hints -> 8 + streak bonus. */
+    const val HINT_PENALTY = 1
+
+    /** Floor for the per-word base reward after the hint penalty, so a fully-hinted win still scores
+     *  something. Applies before the streak bonus is added. Must be >= 0. */
+    const val MIN_POINTS_PER_CORRECT = 1
+
     /** Bonus points per streak step already built up when answering (rewards consecutive correct). */
     const val STREAK_BONUS_PER_STEP = 2
 

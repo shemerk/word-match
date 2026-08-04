@@ -131,7 +131,7 @@ fun GameScreen(state: GameState, viewModel: GameViewModel) {
                     hintExhausted = hintReveal >= maxReveal,
                     onHint = { hintReveal = (hintReveal + 1).coerceAtMost(maxReveal) },
                     onAnswerChange = { answer = it },
-                    onCheck = { viewModel.checkAnswer(answer) },
+                    onCheck = { viewModel.checkAnswer(answer, hintReveal) },
                     onForfeit = viewModel::forfeit
                 )
                 }

@@ -156,6 +156,23 @@ class GameViewModelTest {
         assertEquals(36, vm.state.value.score)
     }
 
+    @Test fun hintsDiscountBaseRewardNotStreakBonus() = runTest {
+        val vm = vm()
+        advanceUntilIdle()
+        vm.setSessionSize(10); vm.startSession()
+        vm.checkAnswer("apple", hintsUsed = 2) // base 10 - 2 = 8 (streak 0, no bonus)
+        assertEquals(8, vm.state.value.lastGained)
+        assertEquals(8, vm.state.value.score)
+    }
+
+    @Test fun hintPenaltyFlooredAtMinimum() = runTest {
+        val vm = vm()
+        advanceUntilIdle()
+        vm.setSessionSize(10); vm.startSession()
+        vm.checkAnswer("apple", hintsUsed = 99) // floored, not negative
+        assertEquals(GameConfig.MIN_POINTS_PER_CORRECT, vm.state.value.lastGained)
+    }
+
     @Test fun bestScorePersistsPerSizeAndFlagsNewRecord() = runTest {
         val store = InMemoryScoreStore()
         val vm = vm(store = store)

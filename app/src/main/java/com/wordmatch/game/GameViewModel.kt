@@ -141,7 +141,7 @@ class GameViewModel(
 
     // ---- In-session ----
 
-    fun checkAnswer(userAnswer: String) {
+    fun checkAnswer(userAnswer: String, hintsUsed: Int = 0) {
         val s = _state.value
         val word = s.currentWord ?: return
         if (!s.awaitingAnswer && s.isAnswerCorrect != false) return // ignore after solve/forfeit
@@ -151,8 +151,11 @@ class GameViewModel(
             if (s.soundEnabled) sound.playCorrect()
             missedIds -= word.id
             val newStreak = s.streak + 1
-            // Base points + a capped bonus for the run already going (see GameConfig.streakBonus).
-            val gained = GameConfig.POINTS_PER_CORRECT + GameConfig.streakBonus(s.streak)
+            // Base points (minus a per-hint penalty, floored) + a capped bonus for the run already
+            // going (see GameConfig.streakBonus). Hints discount the base only, never the bonus.
+            val base = (GameConfig.POINTS_PER_CORRECT - hintsUsed * GameConfig.HINT_PENALTY)
+                .coerceAtLeast(GameConfig.MIN_POINTS_PER_CORRECT)
+            val gained = base + GameConfig.streakBonus(s.streak)
 
             // Lifetime points drive the card collection: add, then award a card if a 100-pt line crossed.
             store.addPoints(gained)
