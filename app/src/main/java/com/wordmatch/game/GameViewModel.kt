@@ -6,6 +6,7 @@ import com.wordmatch.config.GameConfig
 import com.wordmatch.data.InMemoryScoreStore
 import com.wordmatch.data.ScoreStore
 import com.wordmatch.data.WordRepository
+import com.wordmatch.model.Deck
 import com.wordmatch.model.GameState
 import com.wordmatch.model.Screen
 import com.wordmatch.model.WordItem
@@ -30,7 +31,9 @@ class GameViewModel(
     private val store: ScoreStore = InMemoryScoreStore(),
     private val pickNext: (words: List<WordItem>, lastId: Int?) -> WordItem = { words, lastId ->
         if (words.size == 1) words[0] else words.filter { it.id != lastId }.random()
-    }
+    },
+    // Which unowned card to award when a points threshold is crossed. Injectable for deterministic tests.
+    private val pickCard: (unowned: List<Int>) -> Int = { it.random() }
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(GameState(soundEnabled = store.soundEnabled()))
@@ -57,7 +60,7 @@ class GameViewModel(
                 val categories = allWords.map { it.category }.filter { it.isNotBlank() }.distinct().sorted()
                 _state.value = _state.value.copy(loading = false, categories = categories, totalWords = allWords.size)
                 refreshRecords()
-                refreshMascot()
+                refreshCards()
             }
         }
     }
@@ -78,29 +81,43 @@ class GameViewModel(
         _state.value = _state.value.copy(bestScore = store.bestScore(size), bestStreak = store.bestStreak(size))
     }
 
-    /** Recompute mascot fields from the store (lifetime points may have changed while playing). */
-    private fun refreshMascot() {
-        val total = store.totalPoints()
-        val (into, need) = GameConfig.levelProgress(total)
+    /** Sync card fields from the store, first awarding any card the current point total has earned
+     *  but not yet handed out (covers app start / an interrupted award). Awards here are silent. */
+    private fun refreshCards() {
+        reconcileCards()
         _state.value = _state.value.copy(
-            totalPoints = total,
-            level = GameConfig.levelFor(total),
-            levelInto = into,
-            levelNeed = need,
-            playerName = store.playerName(),
-            jerseyColor = store.jerseyColor()
+            totalPoints = store.totalPoints(),
+            ownedCardIds = store.ownedCardIds()
         )
     }
 
-    fun setPlayerName(name: String) {
-        store.setPlayerName(name)
-        _state.value = _state.value.copy(playerName = name)
+    /** Award random unowned cards until the owned count matches points/POINTS_PER_CARD (capped at the
+     *  deck size). Returns the ids awarded this call — in play that is 0 or 1 per correct answer. */
+    private fun reconcileCards(): List<Int> {
+        val deserved = minOf(store.totalPoints() / GameConfig.POINTS_PER_CARD, Deck.SIZE)
+        val awarded = mutableListOf<Int>()
+        var owned = store.ownedCardIds()
+        while (owned.size < deserved) {
+            val unowned = Deck.ALL.map { it.id }.filter { it !in owned }
+            if (unowned.isEmpty()) break
+            val pick = pickCard(unowned)
+            store.unlockCard(pick)
+            owned = owned + pick
+            awarded += pick
+        }
+        return awarded
     }
 
-    fun setJerseyColor(index: Int) {
-        store.setJerseyColor(index)
-        _state.value = _state.value.copy(jerseyColor = index)
+    /** Dismiss the card-win reveal. */
+    fun acknowledgeCard() {
+        _state.value = _state.value.copy(newCardId = null)
     }
+
+    fun openAlbum() {
+        _state.value = _state.value.copy(screen = Screen.ALBUM)
+    }
+
+    fun closeAlbum() = backToStart()
 
     fun startSession() {
         val s = _state.value
@@ -137,13 +154,11 @@ class GameViewModel(
             // Base points + a capped bonus for the run already going (see GameConfig.streakBonus).
             val gained = GameConfig.POINTS_PER_CORRECT + GameConfig.streakBonus(s.streak)
 
-            // Lifetime mascot points: add, then detect a level-up by comparing before/after.
+            // Lifetime points drive the card collection: add, then award a card if a 100-pt line crossed.
             store.addPoints(gained)
             val total = store.totalPoints()
-            val newLevel = GameConfig.levelFor(total)
-            val leveledUp = newLevel > s.level
-            val (into, need) = GameConfig.levelProgress(total)
-            if (leveledUp && s.soundEnabled) sound.playLevelUp()
+            val wonCard = reconcileCards().lastOrNull()   // at most one per answer in practice
+            if (wonCard != null && s.soundEnabled) sound.playLevelUp()
 
             _state.value = s.copy(
                 isAnswerCorrect = true,
@@ -154,10 +169,9 @@ class GameViewModel(
                 correctCount = s.correctCount + 1,
                 checkNonce = s.checkNonce + 1,
                 totalPoints = total,
-                level = newLevel,
-                levelInto = into,
-                levelNeed = need,
-                levelUpNonce = if (leveledUp) s.levelUpNonce + 1 else s.levelUpNonce
+                ownedCardIds = store.ownedCardIds(),
+                newCardId = wonCard ?: s.newCardId,
+                newCardNonce = if (wonCard != null) s.newCardNonce + 1 else s.newCardNonce
             )
             viewModelScope.launch {
                 delay(GameConfig.AUTO_ADVANCE_CORRECT_MS)
@@ -180,7 +194,7 @@ class GameViewModel(
     fun exitGame() {
         _state.value = _state.value.copy(screen = Screen.START)
         refreshRecords()
-        refreshMascot()
+        refreshCards()
     }
 
     /** "Got it!" after a forfeit reveal. */
@@ -224,7 +238,7 @@ class GameViewModel(
     fun backToStart() {
         _state.value = _state.value.copy(screen = Screen.START)
         refreshRecords()
-        refreshMascot()
+        refreshCards()
     }
 
     // ---- Settings ----
@@ -240,9 +254,11 @@ class GameViewModel(
         refreshRecords()
     }
 
-    /** Wipe lifetime mascot progress: level back to 1, total earned points to 0. */
-    fun resetProgress() {
+    /** Wipe the collection: total earned points to 0 AND all cards removed (so points can't
+     *  immediately re-award them). Kept separate from "reset scores". */
+    fun resetCollection() {
         store.resetProgress()
-        refreshMascot()
+        store.resetCards()
+        refreshCards()
     }
 }

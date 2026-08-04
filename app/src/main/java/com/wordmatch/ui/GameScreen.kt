@@ -138,7 +138,8 @@ fun GameScreen(state: GameState, viewModel: GameViewModel) {
             }
         }
         ConfettiOverlay(confetti.value)
-        LevelUpBanner(state.levelUpNonce)
+        // The card-win reveal is rendered globally in MainScreen so it also shows when a card is
+        // won on the last word of a session (which routes straight to the summary screen).
     }
 }
 
@@ -156,7 +157,6 @@ private fun HeaderStats(state: GameState, reducedMotion: Boolean) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        MascotBadge(state, reducedMotion)
         Text(
             "🔥 ${state.streak}",
             modifier = Modifier

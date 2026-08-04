@@ -114,97 +114,43 @@ object GameConfig {
     /** "Best to beat" / record labels. */
     const val FONT_RECORD_SP = 16
 
-    // ---- Mascot (soccer player that levels up on lifetime points) ----
+    // ---- Card collection (win a random soccer-player card every POINTS_PER_CARD points) ----
 
-    /** Points needed for the first level-up (level 1 -> 2). Tuned so the mascot is a LONG-term loop:
-     *  a completed 100-word session earns ~1400-1970 pts, so the top art tier takes ~10 sessions, not one. */
-    const val LEVEL_BASE_COST = 1000
+    /** Lifetime points that unlock one new card. Every time the running total crosses a multiple of
+     *  this, a random not-yet-owned card is awarded. ~5-10 correct answers, i.e. roughly one short
+     *  session per card — frequent enough to stay exciting for a kid. */
+    const val POINTS_PER_CARD = 100
 
-    /** Each level costs this many times the previous one (2 = the cost doubles every level:
-     *  1000, 2000, 4000, 8000…; cumulative thresholds 0, 1000, 3000, 7000, 15000, 31000…). Must be >= 2. */
-    const val LEVEL_GROWTH = 2
+    /** Columns in the album grid. 3 keeps each card large enough to read the baked-in name plate. */
+    const val ALBUM_COLUMNS = 3
 
-    /** Number of distinct sprite/title tiers that have art. levelFor keeps climbing past this
-     *  (extra levels show the top sprite + prestige stars), but the drawable/title clamps here.
-     *  Add art + a title row and bump this to extend. */
-    const val MASCOT_TIER_COUNT = 5
+    /** Width/height ratio of a card, matching the source grid cell (176x192). Keeps cards un-stretched. */
+    const val CARD_ASPECT = 176f / 192f
 
-    /** Prestige stars shown next to the top rank are capped here so the title can't overflow. */
-    const val MASCOT_MAX_STARS = 9
+    /** Corner radius for card frames in the album and the reveal (dp). */
+    const val CARD_CORNER_DP = 12
 
-    /**
-     * Team-colour choices for the jersey picker, as ARGB longs (Compose Color takes a Long).
-     * This colours the nameplate / frame / progress bar — NOT the sprite (avoids tier×colour art).
-     * Index is stored via ScoreStore.jerseyColor(). Order is the swatch order shown to the child.
-     */
-    val JERSEY_COLORS = listOf(
-        0xFFE53935L, // red
-        0xFF1E88E5L, // blue
-        0xFF43A047L, // green
-        0xFFFDD835L  // yellow
-    )
+    /** Card-win reveal: flip-in duration (ms) and the enlarged card size (dp). */
+    const val CARD_REVEAL_FLIP_MS = 500
+    const val CARD_REVEAL_SIZE_DP = 220
 
-    /** Big mascot sprite on the start-screen trophy case (dp, square). */
-    const val MASCOT_BIG_DP = 160
+    /** Full-card zoom (tapping an owned card in the album): size (dp). */
+    const val CARD_ZOOM_SIZE_DP = 300
 
-    /** Compact mascot avatar in the game-screen header (dp, square). */
-    const val MASCOT_COMPACT_DP = 40
+    // ---- Card / album font sizes (sp) ----
 
-    /** Thumbnail size of each tier in the start-screen "shelf" row (dp, square). */
-    const val MASCOT_SHELF_DP = 44
+    /** Album screen title. */
+    const val FONT_ALBUM_TITLE_SP = 24
 
-    /** Scale the avatar bounces to on a correct answer / level-up (1.0 = no bounce). */
-    const val MASCOT_BOUNCE_SCALE = 1.35f
+    /** "X / Y" collected count + the "N points to next card" teaser. */
+    const val FONT_ALBUM_PROGRESS_SP = 18
 
-    /** How long the "עלית רמה!" level-up banner stays up (ms). */
-    const val LEVEL_UP_BANNER_MS = 1800L
+    /** Start-screen album button label. */
+    const val FONT_ALBUM_BUTTON_SP = 20
 
-    /** Rank title on the start-screen trophy case. */
-    const val FONT_RANK_TITLE_SP = 26
+    /** "כרטיס חדש!" title on the card-win reveal. */
+    const val FONT_CARD_REVEAL_TITLE_SP = 26
 
-    /** "עוד N נקודות ל…" next-unlock teaser under the mascot. */
-    const val FONT_MASCOT_TEASER_SP = 16
-
-    /** "עלית רמה!" level-up banner. */
-    const val FONT_LEVEL_UP_SP = 28
-
-    /** The child's player name shown above the mascot. */
-    const val FONT_PLAYER_NAME_SP = 22
-
-    /** Small level number badge on the compact header avatar. */
-    const val FONT_LEVEL_BADGE_SP = 13
-
-    /**
-     * Level (1-based) for a given lifetime point total. Level 1 = [0, BASE), level 2 =
-     * [BASE, BASE+BASE*GROWTH), … Uncapped: a huge total returns a large level (art clamps, not this).
-     */
-    fun levelFor(totalPoints: Int): Int {
-        var level = 1
-        var cost = LEVEL_BASE_COST
-        var remaining = totalPoints
-        while (remaining >= cost) {
-            remaining -= cost
-            cost *= LEVEL_GROWTH
-            level++
-        }
-        return level
-    }
-
-    /** Points earned inside the current level, and the points that level needs, for a progress bar.
-     *  e.g. total 45 -> (15 into this level, of 40 needed). */
-    fun levelProgress(totalPoints: Int): Pair<Int, Int> {
-        var cost = LEVEL_BASE_COST
-        var remaining = totalPoints
-        while (remaining >= cost) {
-            remaining -= cost
-            cost *= LEVEL_GROWTH
-        }
-        return remaining to cost
-    }
-
-    /** Points still needed to reach the next level from a given total. */
-    fun pointsToNextLevel(totalPoints: Int): Int {
-        val (into, need) = levelProgress(totalPoints)
-        return need - into
-    }
+    /** The "?" glyph shown on a not-yet-owned (locked) album slot. */
+    const val FONT_LOCKED_CARD_SP = 40
 }

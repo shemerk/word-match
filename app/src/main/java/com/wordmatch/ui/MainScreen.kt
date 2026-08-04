@@ -47,6 +47,7 @@ fun MainScreen(viewModel: GameViewModel, modifier: Modifier = Modifier) {
                 state.screen == Screen.START -> StartScreen(state, viewModel, onSettings = { showSettings = true })
                 state.screen == Screen.PLAYING -> GameScreen(state, viewModel)
                 state.screen == Screen.SUMMARY -> SummaryScreen(state, viewModel)
+                state.screen == Screen.ALBUM -> AlbumScreen(state, viewModel)
             }
         }
         if (showSettings) {
@@ -54,9 +55,14 @@ fun MainScreen(viewModel: GameViewModel, modifier: Modifier = Modifier) {
                 soundOn = state.soundEnabled,
                 onToggleSound = viewModel::toggleSound,
                 onReset = viewModel::resetScores,
-                onResetProgress = viewModel::resetProgress,
+                onResetCollection = viewModel::resetCollection,
                 onClose = { showSettings = false }
             )
+        }
+        // Card-win reveal — global so it fires on any screen (incl. summary, when the last word wins a card).
+        val newCard = state.newCardId
+        if (newCard != null) {
+            CardRevealDialog(newCard, state.newCardNonce, rememberReducedMotion(), onDismiss = viewModel::acknowledgeCard)
         }
     }
 }
@@ -76,7 +82,7 @@ private fun SettingsDialog(
     soundOn: Boolean,
     onToggleSound: () -> Unit,
     onReset: () -> Unit,
-    onResetProgress: () -> Unit,
+    onResetCollection: () -> Unit,
     onClose: () -> Unit
 ) {
     AlertDialog(
@@ -98,8 +104,8 @@ private fun SettingsDialog(
                     Text(Ui.RESET_SCORES)
                 }
                 Spacer(Modifier.height(8.dp))
-                OutlinedButton(onClick = onResetProgress, modifier = Modifier.fillMaxWidth()) {
-                    Text(Ui.RESET_PROGRESS)
+                OutlinedButton(onClick = onResetCollection, modifier = Modifier.fillMaxWidth()) {
+                    Text(Ui.RESET_COLLECTION)
                 }
             }
         }

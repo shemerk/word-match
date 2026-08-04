@@ -66,8 +66,9 @@ class WordMatchGameTest {
             val idx = list.indexOfFirst { it.id == lastId } // -1 when lastId == null -> first word
             list[(idx + 1) % list.size]
         }
-        // Pre-set a player name so the first-run name/jersey dialog doesn't auto-open over the UI.
-        val store = InMemoryScoreStore().apply { setPlayerName("טסט") }
+        // Pre-own the first card so a full 10-word session (170 lifetime pts, one 100-pt line) never
+        // pops the card-win reveal over the UI mid-flow — these tests assert on the game, not the album.
+        val store = InMemoryScoreStore().apply { unlockCard(1) }
         return GameViewModel(FakeRepo(words), sound, store, sequential)
     }
 
@@ -79,7 +80,7 @@ class WordMatchGameTest {
     /** Set content, wait for the start screen, then begin a session (default: all words, size 10). */
     private fun startGame() {
         rule.setContent { MainScreen(buildViewModel()) }
-        // Wait for the button to exist, then scroll it into view (the trophy case sits above it).
+        // Wait for the button to exist, then scroll it into view (the album card sits above it).
         rule.waitUntil(4000) { rule.onAllNodesWithText("התחל").fetchSemanticsNodes().isNotEmpty() }
         rule.onNodeWithText("התחל").performScrollTo().performClick()
     }

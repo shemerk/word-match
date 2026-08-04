@@ -16,7 +16,7 @@ data class JsonBinResponse(
 )
 
 /** Which top-level screen is showing. */
-enum class Screen { START, PLAYING, SUMMARY }
+enum class Screen { START, PLAYING, SUMMARY, ALBUM }
 
 data class GameState(
     val screen: Screen = Screen.START,
@@ -50,15 +50,12 @@ data class GameState(
 
     val soundEnabled: Boolean = true,
 
-    // Mascot — lifetime progress, recomputed from ScoreStore on START and after each correct answer.
-    val totalPoints: Int = 0,
-    val level: Int = 1,
-    val levelInto: Int = 0,   // points earned inside the current level (progress bar numerator)
-    val levelNeed: Int = GameConfig.LEVEL_BASE_COST, // points the current level needs (denominator)
-    // Bumped only when a correct answer crosses into a new level, so the UI fires the level-up moment.
-    val levelUpNonce: Int = 0,
-    val playerName: String = "",  // "" = not chosen yet (StartScreen prompts)
-    val jerseyColor: Int = 0      // index into GameConfig.JERSEY_COLORS
+    // Card collection — recomputed from ScoreStore on START and after each correct answer.
+    val totalPoints: Int = 0,               // lifetime points earned across all sessions (drives card awards)
+    val ownedCardIds: Set<Int> = emptySet(), // ids of cards already won (see model.Deck)
+    // Set to a freshly-won card id to trigger the reveal; cleared on acknowledge. Nonce re-fires the flip.
+    val newCardId: Int? = null,
+    val newCardNonce: Int = 0
 ) {
     /** True while the current word is awaiting a first answer (not yet solved/forfeited). */
     val awaitingAnswer: Boolean get() = isAnswerCorrect == null && !forfeited

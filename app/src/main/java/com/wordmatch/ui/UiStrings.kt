@@ -46,7 +46,7 @@ internal object Ui {
     const val SETTINGS_TITLE = "הגדרות"
     const val SOUND = "קול"
     const val RESET_SCORES = "אפס שיאים"
-    const val RESET_PROGRESS = "אפס רמה וניקוד כולל"
+    const val RESET_COLLECTION = "אפס אוסף כרטיסים"
     const val CLOSE = "סגור"
 
     /** English category key -> Hebrew label. Falls back to the raw key if unmapped. */
@@ -69,41 +69,20 @@ internal object Ui {
     /** Start-screen badge: how many words are in the whole loaded bank. */
     fun wordBank(total: Int): String = "📚 $total מילים ללמוד"
 
-    // ---- Mascot ----
+    // ---- Card album ----
 
-    const val LEVEL_UP = "עלית רמה!"
-    const val NAME_PROMPT_TITLE = "איך קוראים לשחקן שלך?"
-    const val NAME_PLACEHOLDER = "השם שלך"
-    const val NAME_SAVE = "שמור"
-    const val JERSEY_LABEL = "צבע הקבוצה"
-    const val EDIT_PLAYER = "✎" // tap the name to rename / recolour
+    const val ALBUM_BUTTON = "אלבום הכרטיסים"
+    const val ALBUM_TITLE = "אלבום הכרטיסים"
+    const val ALBUM_BACK = "‹ חזרה"
+    const val ALBUM_COMPLETE = "🏆 אספת את כל הכרטיסים!"
+    const val CARD_WON_TITLE = "🎉 כרטיס חדש!"
+    const val CARD_LOCKED = "?"
 
-    /** Rank title per tier (index = clamped level-1). Escalates with the sprite; see MASCOT_SPEC §5. */
-    private val MASCOT_TITLES = listOf("מתחיל", "שחקן מגרש", "כוכב עולה", "קפטן", "אלוף")
+    /** "collected / total", e.g. "12 / 52". */
+    fun albumProgress(owned: Int, total: Int): String = "$owned / $total"
 
-    /** Short Hebrew name of what you unlock by REACHING level 2,3,4,5 (index = targetLevel-2). */
-    private val MASCOT_REWARDS = listOf("נעליים", "מדים מלאים", "כפפות", "גביע")
-
-    /** Rank title for a level; past the top art tier it gains prestige stars (capped in config). */
-    fun rankTitle(level: Int): String {
-        val base = MASCOT_TITLES[(level - 1).coerceIn(0, MASCOT_TITLES.lastIndex)]
-        val stars = (level - MASCOT_TITLES.size).coerceIn(0, GameConfig.MASCOT_MAX_STARS)
-        return if (stars > 0) "$base ${"⭐".repeat(stars)}" else base
-    }
-
-    /** Teaser under the mascot naming the next reward (or the next prestige star at the top tier). */
-    fun nextUnlock(level: Int, pointsToNext: Int): String {
-        val targetLevel = level + 1
-        return if (targetLevel <= MASCOT_TITLES.size)
-            "עוד $pointsToNext נקודות ל${MASCOT_REWARDS[targetLevel - 2]}"
-        else
-            "עוד $pointsToNext נקודות לכוכב!"
-    }
-
-    fun levelLabel(level: Int): String = "רמה $level"
-
-    /** Greeting line above the mascot once a name is set. */
-    fun playerGreeting(name: String): String = if (name.isBlank()) "" else name
+    /** Teaser under the album button: points still needed for the next card. */
+    fun pointsToNextCard(pointsToNext: Int): String = "עוד $pointsToNext נקודות לכרטיס הבא"
 
     init { require(GameConfig.DEFAULT_SESSION_SIZE in GameConfig.SESSION_SIZES) }
 }

@@ -18,6 +18,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -47,6 +48,9 @@ class GameViewModelTest {
         list[(idx + 1) % list.size]
     }
 
+    // Deterministic card award: always the lowest unowned id.
+    private val firstCard: (List<Int>) -> Int = { it.min() }
+
     private val apple = WordItem(1, "Apple", "תפוח", "fruits")
     private val cat = WordItem(2, "A cat", "חתול", "animals")
 
@@ -54,7 +58,7 @@ class GameViewModelTest {
         words: List<WordItem> = listOf(apple, cat),
         sound: SoundManager = CountingSound(),
         store: InMemoryScoreStore = InMemoryScoreStore()
-    ) = GameViewModel(FakeRepo(words), sound, store, sequential)
+    ) = GameViewModel(FakeRepo(words), sound, store, sequential, firstCard)
 
     @Test fun loadsToStartScreenWithCategories() = runTest {
         val vm = vm()
@@ -171,31 +175,33 @@ class GameViewModelTest {
         assertEquals(22, store.bestScore(2))
     }
 
-    @Test fun correctAnswerAddsLifetimePointsAndDetectsLevelUp() = runTest {
-        // Seed just below the first threshold so one correct answer (apple, +10) crosses it.
-        val store = InMemoryScoreStore().apply { addPoints(GameConfig.LEVEL_BASE_COST - 10) }
+    @Test fun crossingPointsThresholdAwardsACard() = runTest {
+        // Seed just below one card's threshold so a single correct answer (apple, +10) crosses it.
+        val store = InMemoryScoreStore().apply { addPoints(GameConfig.POINTS_PER_CARD - 10) }
         val snd = CountingSound()
-        val vm = GameViewModel(FakeRepo(listOf(apple, cat)), snd, store, sequential)
+        val vm = GameViewModel(FakeRepo(listOf(apple, cat)), snd, store, sequential, firstCard)
         advanceUntilIdle()
         vm.setSessionSize(10); vm.startSession()
-        vm.checkAnswer("apple") // +10 -> exactly BASE -> crosses into level 2
+        vm.checkAnswer("apple") // +10 -> exactly POINTS_PER_CARD -> one card unlocked
         val s = vm.state.value
-        assertEquals(GameConfig.LEVEL_BASE_COST, store.totalPoints())
-        assertEquals(2, s.level)
-        assertEquals(1, snd.levelUp)      // level-up fanfare fired once
-        assertEquals(1, s.levelUpNonce)   // UI moment armed
+        assertEquals(GameConfig.POINTS_PER_CARD, store.totalPoints())
+        assertEquals(1, s.ownedCardIds.size)
+        assertNotNull(s.newCardId)     // reveal armed
+        assertEquals(1, s.newCardNonce)
+        assertEquals(1, snd.levelUp)   // card-win fanfare fired once
     }
 
-    @Test fun lifetimePointsAccumulateWithoutSpuriousLevelUps() = runTest {
+    @Test fun pointsBelowThresholdAwardNoCard() = runTest {
         val store = InMemoryScoreStore()
         val snd = CountingSound()
-        val vm = GameViewModel(FakeRepo(listOf(apple, cat)), snd, store, sequential)
+        val vm = GameViewModel(FakeRepo(listOf(apple, cat)), snd, store, sequential, firstCard)
         advanceUntilIdle()
         vm.setSessionSize(2); vm.startSession()
         vm.checkAnswer("apple"); advanceUntilIdle() // +10
-        vm.checkAnswer("cat"); advanceUntilIdle()   // +12 -> total 22, still below BASE
+        vm.checkAnswer("cat"); advanceUntilIdle()   // +12 -> total 22, below POINTS_PER_CARD
         assertEquals(22, store.totalPoints())
-        assertEquals(1, vm.state.value.level) // 22 < BASE -> no level-up
+        assertTrue(vm.state.value.ownedCardIds.isEmpty())
+        assertNull(vm.state.value.newCardId)
         assertEquals(0, snd.levelUp)
     }
 
