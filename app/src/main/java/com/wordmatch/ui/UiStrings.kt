@@ -13,6 +13,8 @@ internal object Ui {
     const val CATEGORY_LABEL = "נושא"
     const val CATEGORY_ALL = "הכל"
     const val SIZE_LABEL = "מספר מילים"
+    const val WORDSET_LABEL = "אילו מילים"
+    const val ALL_WORDS = "כל המילים"
     const val START = "התחל"
     const val BEST_TO_BEAT = "שיא לשבור: "
     const val NO_RECORD = "אין שיא עדיין — קבע אחד!"
@@ -68,6 +70,9 @@ internal object Ui {
 
     /** Start-screen badge: how many words are in the whole loaded bank. */
     fun wordBank(total: Int): String = "📚 $total מילים ללמוד"
+
+    /** "New words" chip label with the newest-batch count, e.g. "מילים חדשות (12)". */
+    fun newWords(count: Int): String = "מילים חדשות ($count)"
 
     // ---- Card album ----
 

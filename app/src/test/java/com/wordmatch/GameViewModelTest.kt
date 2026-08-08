@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -89,6 +90,43 @@ class GameViewModelTest {
         vm.setCategory("fruits")
         vm.startSession()
         assertEquals("fruits", vm.state.value.currentWord?.category)
+    }
+
+    @Test fun newestBatchDefaultsOnAndLimitsPoolToThatBatch() = runTest {
+        val old = WordItem(1, "old", "ישן", "x", batch = 0)
+        val new1 = WordItem(2, "new1", "חדש1", "x", batch = 3)
+        val new2 = WordItem(3, "new2", "חדש2", "x", batch = 3)
+        val vm = vm(words = listOf(old, new1, new2))
+        advanceUntilIdle()
+        val s = vm.state.value
+        assertTrue(s.hasNewBatch)
+        assertEquals(2, s.newBatchCount) // both batch-3 words
+        assertTrue(s.newOnly)            // defaults to New when a batch exists
+
+        vm.setSessionSize(10); vm.startSession()
+        // Play both new words; the old (batch 0) word must never appear.
+        vm.checkAnswer("new1"); advanceUntilIdle()
+        assertNotEquals(1, vm.state.value.currentWord?.id)
+    }
+
+    @Test fun noNewBatchWhenAllWordsAreBatchZero() = runTest {
+        val vm = vm() // apple + cat, both batch 0
+        advanceUntilIdle()
+        val s = vm.state.value
+        assertFalse(s.hasNewBatch)
+        assertFalse(s.newOnly)
+    }
+
+    @Test fun newOnlyFalseUsesWholeBank() = runTest {
+        val old = WordItem(1, "old", "ישן", "x", batch = 0)
+        val new1 = WordItem(2, "new1", "חדש", "x", batch = 1)
+        val vm = vm(words = listOf(old, new1))
+        advanceUntilIdle()
+        vm.setNewOnly(false)
+        vm.setSessionSize(10); vm.startSession()
+        // sequential picker starts at index 0 -> the old word is reachable again.
+        vm.checkAnswer("new1"); advanceUntilIdle()
+        assertEquals(1, vm.state.value.currentWord?.id) // wrapped back to the old word
     }
 
     @Test fun correctAnswerScoresStreakAndCorrectCount() = runTest {

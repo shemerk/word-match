@@ -7,7 +7,10 @@ data class WordItem(
     val id: Int = 0,
     val english: String = "",
     val hebrew: String = "",
-    val category: String = ""
+    val category: String = "",
+    // Batch this word was added in. 0 = original bundled set. The highest batch present is "new
+    // words"; adding a newer batch auto-demotes the previous one. Gson defaults missing to 0.
+    val batch: Int = 0
 )
 
 /** JSONBin.io (and our bundled asset) wrap the list in a "record" object. */
@@ -28,6 +31,11 @@ data class GameState(
     val categories: List<String> = emptyList(),   // available themes (excludes "all")
     val category: String? = null,                 // null = all themes
     val sessionSize: Int = GameConfig.DEFAULT_SESSION_SIZE,
+    // New-words selector: shown only when a batch > 0 exists; defaults to New. When true the session
+    // pool is restricted to the newest batch (see GameViewModel.startSession).
+    val hasNewBatch: Boolean = false,
+    val newBatchCount: Int = 0,                    // how many words are in the newest batch
+    val newOnly: Boolean = false,                  // true = play only the newest batch
 
     // In-session play
     val currentWord: WordItem? = null,

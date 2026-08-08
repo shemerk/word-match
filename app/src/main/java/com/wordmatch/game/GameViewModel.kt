@@ -40,6 +40,7 @@ class GameViewModel(
     val state: StateFlow<GameState> = _state.asStateFlow()
 
     private var allWords: List<WordItem> = emptyList()
+    private var newestBatch: Int = 0                  // highest batch present; > 0 means "new words" exist
     private var pool: List<WordItem> = emptyList()   // words for the active session (filtered)
     private var lastWordId: Int? = null
     // Words answered wrong this session; drawn at higher probability until solved (in-memory only).
@@ -58,7 +59,14 @@ class GameViewModel(
                 _state.value = _state.value.copy(loading = false, error = true)
             } else {
                 val categories = allWords.map { it.category }.filter { it.isNotBlank() }.distinct().sorted()
-                _state.value = _state.value.copy(loading = false, categories = categories, totalWords = allWords.size)
+                newestBatch = allWords.maxOf { it.batch }
+                val hasNew = newestBatch > 0
+                _state.value = _state.value.copy(
+                    loading = false, categories = categories, totalWords = allWords.size,
+                    hasNewBatch = hasNew,
+                    newBatchCount = allWords.count { it.batch == newestBatch },
+                    newOnly = hasNew   // default to the newest batch when one exists
+                )
                 refreshRecords()
                 refreshCards()
             }
@@ -69,6 +77,11 @@ class GameViewModel(
 
     fun setCategory(category: String?) {
         _state.value = _state.value.copy(category = category)
+    }
+
+    /** Toggle between the newest batch ("new words") and the whole bank. */
+    fun setNewOnly(newOnly: Boolean) {
+        _state.value = _state.value.copy(newOnly = newOnly)
     }
 
     fun setSessionSize(size: Int) {
@@ -121,7 +134,11 @@ class GameViewModel(
 
     fun startSession() {
         val s = _state.value
-        pool = if (s.category == null) allWords else allWords.filter { it.category == s.category }
+        pool = when {
+            s.newOnly && newestBatch > 0 -> allWords.filter { it.batch == newestBatch }
+            s.category == null -> allWords
+            else -> allWords.filter { it.category == s.category }
+        }
         if (pool.isEmpty()) return
         lastWordId = null
         missedIds.clear()

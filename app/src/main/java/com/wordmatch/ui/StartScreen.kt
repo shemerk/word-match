@@ -65,6 +65,16 @@ fun StartScreen(state: GameState, viewModel: GameViewModel, onSettings: () -> Un
         Spacer(Modifier.height(12.dp))
         AlbumButton(state, onClick = viewModel::openAlbum)
 
+        // Word-set selector — only when a newer batch has been added (defaults to "new words").
+        if (state.hasNewBatch) {
+            Spacer(Modifier.height(24.dp))
+            SectionLabel(Ui.WORDSET_LABEL)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                SelectChip(Ui.newWords(state.newBatchCount), selected = state.newOnly) { viewModel.setNewOnly(true) }
+                SelectChip(Ui.ALL_WORDS, selected = !state.newOnly) { viewModel.setNewOnly(false) }
+            }
+        }
+
         Spacer(Modifier.height(24.dp))
         SectionLabel(Ui.SIZE_LABEL)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
