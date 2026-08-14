@@ -1,21 +1,35 @@
 ---
 name: add-words
-description: Add a batch of new Hebrew→English vocabulary words to WordMatch. Appends rows to BOTH app/src/main/assets/words.json (wrapped "record") and jsonbin_upload.json (bare array), auto-assigning ids and the next batch number so the new words become the app's selectable "new words" set. Use when the user says "add words", "new words batch", "add vocabulary", or pastes Hebrew/English pairs to add.
+description: Add a batch of new Hebrew→English vocabulary words to WordMatch, for a specific child (Oren or Roni — each has their own dictionary/bin). Appends rows to that child's word file(s), auto-assigning ids and (for a new batch) the next batch number so the new words become that child's selectable "new words" set. Use when the user says "add words", "new words batch", "add vocabulary", or pastes Hebrew/English pairs to add.
 ---
 
 # Add words to WordMatch
 
-Adds a batch of vocabulary. New words get the **next batch number**, which makes them the
-app's "new words" set on the start screen (the newest batch auto-demotes the previous one).
+Adds a batch of vocabulary **to one child's dictionary**. New words get the **next batch number**,
+which makes them that child's "new words" set on the start screen (the newest batch auto-demotes the
+previous one).
 
-## The two files — keep them in sync
+## Which child?
 
-The same words live in two shapes (this is a known footgun — see CLAUDE.md):
+Each child in `GameConfig.CHILDREN` has their own dictionary (bin), so words are added per child.
+Ask which child if the user didn't say; default to **Oren**.
 
-- `app/src/main/assets/words.json` — **wrapped**: `{ "record": [ ...items ] }` (offline/bundled).
-- `jsonbin_upload.json` (repo root) — **bare array**: `[ ...items ]` (paste target for JSONBin).
+| Child | File(s) to update | Bin id (for upload) |
+|-------|-------------------|---------------------|
+| **Oren** | `app/src/main/assets/words.json` (wrapped) **and** `jsonbin_upload.json` (bare array) | `gradle.properties` → `JSONBIN_BIN_ID` |
+| **Roni** | `roni_upload.json` (bare array) — bin-only, **no** bundled asset | `6a7f3b7fda38895dfee52cd0` |
 
-Every add must update **both**. They must end up with the identical item list.
+A new child added to `CHILDREN` follows Roni's pattern: one `<id>_upload.json` bare array + their bin.
+
+## The file shapes — keep a child's copies in sync
+
+The same words can live in two shapes (this is a known footgun — see CLAUDE.md):
+
+- **wrapped**: `{ "record": [ ...items ] }` (offline/bundled asset — Oren only).
+- **bare array**: `[ ...items ]` (the push target for JSONBin — every bin-backed child).
+
+For a child with both shapes (Oren), every add must update **both** to the identical item list.
+For a bin-only child (Roni), update just the one bare-array file.
 
 ## Item shape
 
@@ -36,29 +50,34 @@ Every add must update **both**. They must end up with the identical item list.
 
 ## Steps
 
-1. Read `app/src/main/assets/words.json`. Find the current **max `id`** and **max `batch`**.
-2. `nextBatch = maxBatch + 1`. Starting id = `maxId + 1`.
-3. Build the new item objects (ids incrementing, all with `batch = nextBatch`).
-4. Append them to the `record` array in `words.json` (before the closing `]`).
-5. Append the **same** items to the bare array in `jsonbin_upload.json`.
-6. Show the user the added rows and the batch number.
-7. If `JSONBIN_BIN_ID` is set in `gradle.properties`, push `jsonbin_upload.json` to JSONBin automatically:
+1. Determine the target child (see table above) and their file(s) + bin id.
+2. Read that child's bare-array file (`jsonbin_upload.json` for Oren, `<id>_upload.json` otherwise).
+   Find the current **max `id`** and **max `batch`**.
+3. `nextBatch = maxBatch + 1`. Starting id = `maxId + 1`.
+4. Build the new item objects (ids incrementing, all with `batch = nextBatch`).
+5. Append them to the bare array in the child's `*_upload.json`.
+6. **Oren only:** append the **same** items to the `record` array in `app/src/main/assets/words.json`.
+7. Show the user the added rows and the batch number.
+8. Push the child's bare-array file to their bin (see table for the bin id):
    ```powershell
-   $key = 'PASTE_KEY_HERE'  # see below — read from env or ask user
-   $body = [System.IO.File]::ReadAllText('jsonbin_upload.json', [System.Text.Encoding]::UTF8)
+   $binId = 'THE_CHILDS_BIN_ID'
+   $file  = 'roni_upload.json'   # or jsonbin_upload.json for Oren
+   $key = $env:JSONBIN_MASTER_KEY
+   $body = [System.IO.File]::ReadAllText($file, [System.Text.Encoding]::UTF8)
    Invoke-RestMethod -Uri "https://api.jsonbin.io/v3/b/$binId" -Method Put `
      -Headers @{ 'X-Master-Key' = $key; 'Content-Type' = 'application/json; charset=utf-8' } `
      -Body ([System.Text.Encoding]::UTF8.GetBytes($body))
    ```
-   Read `JSONBIN_BIN_ID` from `gradle.properties`. Read `JSONBIN_MASTER_KEY` from the
-   `JSONBIN_MASTER_KEY` environment variable (`$env:JSONBIN_MASTER_KEY`). If the env var is
-   missing, ask the user to paste their JSONBin Master Key (starts with `$2a$` or `$2b$`), then
-   run the upload. Confirm success or report the error.
+   For Oren, read the bin id from `gradle.properties` (`JSONBIN_BIN_ID`); blank ⇒ bundled only, skip
+   the upload. Read `JSONBIN_MASTER_KEY` from the `JSONBIN_MASTER_KEY` environment variable. If the
+   env var is missing, ask the user to paste their JSONBin Master Key (starts with `$2a$` or `$2b$`),
+   then run the upload. Confirm success or report the error.
 
 If the user gives only Hebrew+English (no category), infer a sensible existing category and tell
 them what you picked.
 
 ## Notes
 
-- Don't renumber or reorder existing rows.
-- Blank `JSONBIN_BIN_ID` = bundled words only, skip the upload step entirely.
+- Don't renumber or reorder existing rows. Ids are per child (each file starts at 1).
+- Never mix children in one add — a batch targets exactly one child's dictionary.
+- Oren with a blank `JSONBIN_BIN_ID` = bundled words only, skip the upload step entirely.
