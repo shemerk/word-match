@@ -26,6 +26,9 @@ data class GameState(
     val loading: Boolean = true,   // words still loading at app start
     val error: Boolean = false,    // load failed with no words at all
 
+    // Which child profile is active (GameConfig.CHILDREN id) — selects dictionary + progress namespace.
+    val activeChildId: String = GameConfig.CHILDREN.first().id,
+
     // Start-screen selection
     val totalWords: Int = 0,                       // size of the whole loaded word bank
     val categories: List<String> = emptyList(),   // available themes (excludes "all")

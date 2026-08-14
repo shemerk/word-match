@@ -50,6 +50,17 @@ fun StartScreen(state: GameState, viewModel: GameViewModel, onSettings: () -> Un
             )
         }
 
+        // Child selector — swaps dictionary + that child's records/album. Only shown with 2+ profiles.
+        if (GameConfig.CHILDREN.size > 1) {
+            Spacer(Modifier.height(16.dp))
+            SectionLabel(Ui.CHILD_LABEL)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                GameConfig.CHILDREN.forEach { c ->
+                    SelectChip(c.displayName, selected = state.activeChildId == c.id) { viewModel.setChild(c.id) }
+                }
+            }
+        }
+
         // Word-bank size — how many words are available to learn.
         if (state.totalWords > 0) {
             Spacer(Modifier.height(6.dp))

@@ -12,16 +12,17 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 interface WordRepository {
-    suspend fun loadWords(): List<WordItem>
+    /** Loads the dictionary for [binId] (the active child's bin). Blank = bundled words only. */
+    suspend fun loadWords(binId: String): List<WordItem>
 }
 
 /**
  * Loads words from a public JSONBin.io bin when [binId] is set, otherwise (or on any network
  * failure) falls back to the bundled assets/words.json so the app always has words to show.
+ * The bin is passed per call (not baked in) so switching child switches dictionary at runtime.
  */
 class WordRepositoryImpl(
     private val context: Context,
-    private val binId: String,
     private val api: JsonBinApi = Retrofit.Builder()
         .baseUrl(GameConfig.JSONBIN_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
@@ -29,7 +30,7 @@ class WordRepositoryImpl(
         .create(JsonBinApi::class.java)
 ) : WordRepository {
 
-    override suspend fun loadWords(): List<WordItem> = withContext(Dispatchers.IO) {
+    override suspend fun loadWords(binId: String): List<WordItem> = withContext(Dispatchers.IO) {
         if (binId.isNotBlank()) {
             runCatching { api.getWords(binId).record }
                 .getOrNull()

@@ -1,10 +1,25 @@
 package com.wordmatch.config
 
+import com.wordmatch.BuildConfig
+
+/** One child profile: which JSONBin dictionary they learn from and how their name shows in the UI.
+ *  [id] also namespaces that child's high scores + card collection in ScoreStore, so never reuse one. */
+data class Child(val id: String, val displayName: String, val binId: String)
+
 /**
  * Single source of truth for every tunable value. Adjust gameplay/typography here, not in code.
  * Direction is fixed: show the Hebrew word, learner types the English translation.
  */
 object GameConfig {
+
+    /** The children who can be selected on the start screen. First entry is the default profile.
+     *  Each has its OWN dictionary (binId), high scores and card album (keyed by id). Oren keeps
+     *  pulling BuildConfig.JSONBIN_BIN_ID so blanking it in gradle.properties still means "bundled
+     *  words.json only". Roni's bin is fixed here. Add a child by appending another entry. */
+    val CHILDREN = listOf(
+        Child(id = "oren", displayName = "אורן", binId = BuildConfig.JSONBIN_BIN_ID),
+        Child(id = "roni", displayName = "רוני", binId = "6a7f3b7fda38895dfee52cd0")
+    )
 
     /** Base points added per correct answer (before any streak bonus). */
     const val POINTS_PER_CORRECT = 10

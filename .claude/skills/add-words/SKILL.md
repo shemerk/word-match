@@ -42,13 +42,23 @@ Every add must update **both**. They must end up with the identical item list.
 4. Append them to the `record` array in `words.json` (before the closing `]`).
 5. Append the **same** items to the bare array in `jsonbin_upload.json`.
 6. Show the user the added rows and the batch number.
+7. If `JSONBIN_BIN_ID` is set in `gradle.properties`, push `jsonbin_upload.json` to JSONBin automatically:
+   ```powershell
+   $key = 'PASTE_KEY_HERE'  # see below — read from env or ask user
+   $body = [System.IO.File]::ReadAllText('jsonbin_upload.json', [System.Text.Encoding]::UTF8)
+   Invoke-RestMethod -Uri "https://api.jsonbin.io/v3/b/$binId" -Method Put `
+     -Headers @{ 'X-Master-Key' = $key; 'Content-Type' = 'application/json; charset=utf-8' } `
+     -Body ([System.Text.Encoding]::UTF8.GetBytes($body))
+   ```
+   Read `JSONBIN_BIN_ID` from `gradle.properties`. Read `JSONBIN_MASTER_KEY` from the
+   `JSONBIN_MASTER_KEY` environment variable (`$env:JSONBIN_MASTER_KEY`). If the env var is
+   missing, ask the user to paste their JSONBin Master Key (starts with `$2a$` or `$2b$`), then
+   run the upload. Confirm success or report the error.
 
 If the user gives only Hebrew+English (no category), infer a sensible existing category and tell
 them what you picked.
 
 ## Notes
 
-- If `JSONBIN_BIN_ID` in `gradle.properties` is set, remind the user that live play reads JSONBin
-  until it fails — the words.json change only shows offline unless they also paste
-  `jsonbin_upload.json` into the bin. Blank id = bundled words only, nothing extra to do.
 - Don't renumber or reorder existing rows.
+- Blank `JSONBIN_BIN_ID` = bundled words only, skip the upload step entirely.

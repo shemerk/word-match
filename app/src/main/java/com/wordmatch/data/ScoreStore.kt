@@ -1,12 +1,21 @@
 package com.wordmatch.data
 
 import android.content.Context
+import com.wordmatch.config.GameConfig
 
 /**
  * Persists the best score and best streak to beat, kept SEPARATELY per session-size bucket
  * (10 / 20 / 50 / 100 words), plus the sound on/off preference and the lifetime card collection.
+ *
+ * Scores, points and cards are ALSO namespaced per child (see [setActiveChild]): each child has an
+ * independent album and record book. The sound pref and the remembered active child are global.
  */
 interface ScoreStore {
+    /** The child whose progress is currently active (persisted). Defaults to the first configured. */
+    fun activeChildId(): String
+    /** Switches the active child; all score/points/card reads and writes now target that child. */
+    fun setActiveChild(id: String)
+
     fun bestScore(size: Int): Int
     fun bestStreak(size: Int): Int
 
@@ -37,22 +46,32 @@ interface ScoreStore {
     fun resetCards()
 }
 
-/** SharedPreferences-backed store. Keys are namespaced by size so buckets never collide. */
+/** SharedPreferences-backed store. Keys are namespaced by active child AND (for scores) by size,
+ *  so neither child nor bucket ever collides. */
 class PrefsScoreStore(context: Context) : ScoreStore {
     private val prefs = context.getSharedPreferences("wordmatch_scores", Context.MODE_PRIVATE)
 
-    // Card progress lives in a SEPARATE file so resetAll()'s clear() on wordmatch_scores can
+    // Card progress lives in a SEPARATE file so resetAll()'s per-child clear on wordmatch_scores can
     // never wipe it — this separation IS the "keep your cards on reset" guarantee.
     private val player = context.getSharedPreferences("wordmatch_player", Context.MODE_PRIVATE)
 
-    override fun bestScore(size: Int) = prefs.getInt("score_$size", 0)
-    override fun bestStreak(size: Int) = prefs.getInt("streak_$size", 0)
+    // Active child prefixes every score/points/card key. Restored from the (global) saved choice.
+    private var child = player.getString("active_child", null) ?: GameConfig.CHILDREN.first().id
+
+    override fun activeChildId() = child
+    override fun setActiveChild(id: String) {
+        child = id
+        player.edit().putString("active_child", id).apply()
+    }
+
+    override fun bestScore(size: Int) = prefs.getInt("${child}_score_$size", 0)
+    override fun bestStreak(size: Int) = prefs.getInt("${child}_streak_$size", 0)
 
     override fun saveIfBetter(size: Int, score: Int, streak: Int): Boolean {
         val beatScore = score > bestScore(size)
         prefs.edit().apply {
-            if (beatScore) putInt("score_$size", score)
-            if (streak > bestStreak(size)) putInt("streak_$size", streak)
+            if (beatScore) putInt("${child}_score_$size", score)
+            if (streak > bestStreak(size)) putInt("${child}_streak_$size", streak)
         }.apply()
         return beatScore
     }
@@ -61,25 +80,27 @@ class PrefsScoreStore(context: Context) : ScoreStore {
     override fun setSoundEnabled(on: Boolean) = prefs.edit().putBoolean("sound_enabled", on).apply()
 
     override fun resetAll() {
-        val on = soundEnabled()
-        prefs.edit().clear().putBoolean("sound_enabled", on).apply()
+        // Only the ACTIVE child's records — remove each bucket's keys (clear() would nuke both kids).
+        prefs.edit().apply {
+            GameConfig.SESSION_SIZES.forEach { remove("${child}_score_$it"); remove("${child}_streak_$it") }
+        }.apply()
     }
 
-    override fun totalPoints() = player.getInt("total_points", 0)
-    override fun addPoints(delta: Int) = player.edit().putInt("total_points", totalPoints() + delta).apply()
-    override fun resetProgress() = player.edit().remove("total_points").apply()
+    override fun totalPoints() = player.getInt("${child}_total_points", 0)
+    override fun addPoints(delta: Int) = player.edit().putInt("${child}_total_points", totalPoints() + delta).apply()
+    override fun resetProgress() = player.edit().remove("${child}_total_points").apply()
 
     override fun ownedCardIds(): Set<Int> =
-        (player.getStringSet("owned_cards", emptySet()) ?: emptySet()).mapNotNull { it.toIntOrNull() }.toSet()
+        (player.getStringSet("${child}_owned_cards", emptySet()) ?: emptySet()).mapNotNull { it.toIntOrNull() }.toSet()
 
     override fun unlockCard(id: Int) {
         // getStringSet returns a shared instance that must not be mutated in place — copy first.
-        val cur = (player.getStringSet("owned_cards", emptySet()) ?: emptySet()).toMutableSet()
+        val cur = (player.getStringSet("${child}_owned_cards", emptySet()) ?: emptySet()).toMutableSet()
         cur += id.toString()
-        player.edit().putStringSet("owned_cards", cur).apply()
+        player.edit().putStringSet("${child}_owned_cards", cur).apply()
     }
 
-    override fun resetCards() = player.edit().remove("owned_cards").apply()
+    override fun resetCards() = player.edit().remove("${child}_owned_cards").apply()
 }
 
 /** In-memory store for unit tests (no Android dependency). */
@@ -88,6 +109,11 @@ class InMemoryScoreStore(private var sound: Boolean = true) : ScoreStore {
     private val streaks = mutableMapOf<Int, Int>()
     private var points = 0
     private val cards = mutableSetOf<Int>()
+
+    // ponytail: single namespace — no test switches child; add per-child maps if one ever needs to.
+    private var child = GameConfig.CHILDREN.first().id
+    override fun activeChildId() = child
+    override fun setActiveChild(id: String) { child = id }
 
     override fun bestScore(size: Int) = scores[size] ?: 0
     override fun bestStreak(size: Int) = streaks[size] ?: 0

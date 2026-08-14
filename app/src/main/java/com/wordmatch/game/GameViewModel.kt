@@ -2,6 +2,7 @@ package com.wordmatch.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wordmatch.config.Child
 import com.wordmatch.config.GameConfig
 import com.wordmatch.data.InMemoryScoreStore
 import com.wordmatch.data.ScoreStore
@@ -36,7 +37,13 @@ class GameViewModel(
     private val pickCard: (unowned: List<Int>) -> Int = { it.random() }
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(GameState(soundEnabled = store.soundEnabled()))
+    // Active child: dictionary + progress namespace. Restored from the store's saved choice.
+    private var child: Child = GameConfig.CHILDREN.firstOrNull { it.id == store.activeChildId() }
+        ?: GameConfig.CHILDREN.first()
+
+    private val _state = MutableStateFlow(
+        GameState(soundEnabled = store.soundEnabled(), activeChildId = child.id)
+    )
     val state: StateFlow<GameState> = _state.asStateFlow()
 
     private var allWords: List<WordItem> = emptyList()
@@ -54,7 +61,7 @@ class GameViewModel(
 
     private fun load() {
         viewModelScope.launch {
-            allWords = runCatching { repository.loadWords() }.getOrDefault(emptyList())
+            allWords = runCatching { repository.loadWords(child.binId) }.getOrDefault(emptyList())
             if (allWords.isEmpty()) {
                 _state.value = _state.value.copy(loading = false, error = true)
             } else {
@@ -62,7 +69,8 @@ class GameViewModel(
                 newestBatch = allWords.maxOf { it.batch }
                 val hasNew = newestBatch > 0
                 _state.value = _state.value.copy(
-                    loading = false, categories = categories, totalWords = allWords.size,
+                    loading = false, error = false, categories = categories, totalWords = allWords.size,
+                    category = null,   // reset — a stale category may not exist in the new dictionary
                     hasNewBatch = hasNew,
                     newBatchCount = allWords.count { it.batch == newestBatch },
                     newOnly = hasNew   // default to the newest batch when one exists
@@ -74,6 +82,15 @@ class GameViewModel(
     }
 
     // ---- Start screen ----
+
+    /** Switch the active child: swaps dictionary + progress namespace, then reloads its words. */
+    fun setChild(id: String) {
+        if (id == child.id) return
+        child = GameConfig.CHILDREN.firstOrNull { it.id == id } ?: return
+        store.setActiveChild(child.id)
+        _state.value = _state.value.copy(loading = true, activeChildId = child.id)
+        load()
+    }
 
     fun setCategory(category: String?) {
         _state.value = _state.value.copy(category = category)

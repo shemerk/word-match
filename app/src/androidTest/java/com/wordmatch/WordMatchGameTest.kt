@@ -51,7 +51,7 @@ class WordMatchGameTest {
     }
 
     private class FakeRepo(private val words: List<WordItem>) : WordRepository {
-        override suspend fun loadWords(): List<WordItem> = words
+        override suspend fun loadWords(binId: String): List<WordItem> = words
     }
 
     private fun loadTestWords(): List<WordItem> {

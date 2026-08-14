@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
                 GameViewModel(
-                    repository = WordRepositoryImpl(applicationContext, BuildConfig.JSONBIN_BIN_ID),
+                    repository = WordRepositoryImpl(applicationContext),
                     sound = AndroidSoundManager(applicationContext),
                     store = PrefsScoreStore(applicationContext)
                 ) as T

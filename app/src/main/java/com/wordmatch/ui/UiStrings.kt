@@ -9,6 +9,7 @@ internal object Ui {
 
     // Start screen
     const val TITLE = "וורדמץ׳"
+    const val CHILD_LABEL = "מי משחק"
     const val PICK = "בחר מספר מילים"
     const val CATEGORY_LABEL = "נושא"
     const val CATEGORY_ALL = "הכל"
