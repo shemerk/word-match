@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
@@ -106,7 +108,7 @@ fun GameScreen(state: GameState, viewModel: GameViewModel) {
             Text(Ui.LANG_HINT, fontSize = GameConfig.FONT_LANG_HINT_SP.sp, color = WarmGray)
 
             Spacer(Modifier.height(20.dp))
-            WordCard(hebrew = word?.hebrew ?: "", english = word?.english ?: "", flipped = state.forfeited, reducedMotion = reducedMotion)
+            WordCard(wordKey = word?.id, hebrew = word?.hebrew ?: "", english = word?.english ?: "", flipped = state.forfeited, reducedMotion = reducedMotion)
 
             Spacer(Modifier.height(24.dp))
             when {
@@ -175,12 +177,17 @@ private fun HeaderStats(state: GameState, reducedMotion: Boolean) {
 }
 
 @Composable
-private fun WordCard(hebrew: String, english: String, flipped: Boolean, reducedMotion: Boolean) {
-    val rotation by animateFloatAsState(
-        targetValue = if (flipped) 180f else 0f,
-        animationSpec = tween(if (reducedMotion) 0 else GameConfig.FLIP_DURATION_MS),
-        label = "flip"
-    )
+private fun WordCard(wordKey: Int?, hebrew: String, english: String, flipped: Boolean, reducedMotion: Boolean) {
+    val flip = remember { Animatable(0f) }
+    // Animate ONLY the forward flip (the forfeit reveal). Any move to the front face — a new word
+    // (wordKey change, which always resets forfeited to false) or reduced motion — snaps instantly,
+    // so the back face never briefly shows the NEXT word's English (its answer) during an un-flip.
+    LaunchedEffect(wordKey, flipped) {
+        val target = if (flipped) 180f else 0f
+        if (flipped && !reducedMotion) flip.animateTo(target, tween(GameConfig.FLIP_DURATION_MS))
+        else flip.snapTo(target)
+    }
+    val rotation = flip.value
     Card(
         modifier = Modifier.fillMaxWidth().graphicsLayer {
             rotationY = rotation
@@ -227,6 +234,9 @@ private fun AnswerArea(
             .offset { IntOffset(shakeX.roundToInt(), 0) }
             .testTag("answerInput"),
         singleLine = true,
+        // Password keyboard type suppresses the autocomplete/suggestion strip (spoilers).
+        // No PasswordVisualTransformation -> text stays visible plaintext.
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false),
         // Answer is English -> left-to-right text inside the RTL screen.
         textStyle = TextStyle(fontSize = GameConfig.FONT_INPUT_SP.sp, textDirection = TextDirection.Ltr),
         placeholder = { Text(Ui.INPUT_PLACEHOLDER, color = WarmGray) }
