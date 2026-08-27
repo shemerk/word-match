@@ -1,5 +1,6 @@
 package com.wordmatch.model
 
+import com.wordmatch.config.Direction
 import com.wordmatch.config.GameConfig
 
 /** One vocabulary pair. Defaults let Gson tolerate missing fields. */
@@ -34,6 +35,8 @@ data class GameState(
     val categories: List<String> = emptyList(),   // available themes (excludes "all")
     val category: String? = null,                 // null = all themes
     val sessionSize: Int = GameConfig.DEFAULT_SESSION_SIZE,
+    // Translation direction (start-screen selection, persisted globally). MIX resolves per word.
+    val direction: Direction = GameConfig.DEFAULT_DIRECTION,
     // New-words selector: shown only when a batch > 0 exists; defaults to New. When true the session
     // pool is restricted to the newest batch (see GameViewModel.startSession).
     val hasNewBatch: Boolean = false,
@@ -42,6 +45,9 @@ data class GameState(
 
     // In-session play
     val currentWord: WordItem? = null,
+    // Resolved for the current word: true = Hebrew shown / type English, false = the reverse.
+    // Constant within a fixed-direction session; re-rolled per word in MIX.
+    val promptIsHebrew: Boolean = true,
     val streak: Int = 0,
     val score: Int = 0,
     val lastGained: Int = 0,       // points from the most recent correct answer (base + streak bonus)

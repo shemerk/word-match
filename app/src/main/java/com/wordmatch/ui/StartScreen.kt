@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wordmatch.config.Direction
 import com.wordmatch.config.GameConfig
 import com.wordmatch.game.GameViewModel
 import com.wordmatch.model.GameState
@@ -84,6 +85,15 @@ fun StartScreen(state: GameState, viewModel: GameViewModel, onSettings: () -> Un
                 SelectChip(Ui.newWords(state.newBatchCount), selected = state.newOnly) { viewModel.setNewOnly(true) }
                 SelectChip(Ui.ALL_WORDS, selected = !state.newOnly) { viewModel.setNewOnly(false) }
             }
+        }
+
+        // Translation-direction selector — which language is shown vs. typed (default HE→EN).
+        Spacer(Modifier.height(24.dp))
+        SectionLabel(Ui.DIRECTION_LABEL)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SelectChip(Ui.DIR_HE_EN, selected = state.direction == Direction.HE_TO_EN) { viewModel.setDirection(Direction.HE_TO_EN) }
+            SelectChip(Ui.DIR_EN_HE, selected = state.direction == Direction.EN_TO_HE) { viewModel.setDirection(Direction.EN_TO_HE) }
+            SelectChip(Ui.DIR_MIX, selected = state.direction == Direction.MIX) { viewModel.setDirection(Direction.MIX) }
         }
 
         Spacer(Modifier.height(24.dp))

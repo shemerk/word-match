@@ -6,6 +6,10 @@ import com.wordmatch.BuildConfig
  *  [id] also namespaces that child's high scores + card collection in ScoreStore, so never reuse one. */
 data class Child(val id: String, val displayName: String, val binId: String)
 
+/** Which language is shown as the prompt; the learner types the other. MIX = random per word.
+ *  HE_TO_EN: show Hebrew, type English (the original fixed behavior). EN_TO_HE: the reverse. */
+enum class Direction { HE_TO_EN, EN_TO_HE, MIX }
+
 /**
  * Single source of truth for every tunable value. Adjust gameplay/typography here, not in code.
  * Direction is fixed: show the Hebrew word, learner types the English translation.
@@ -47,6 +51,9 @@ object GameConfig {
 
     /** Session length selected by default. Must be one of [SESSION_SIZES]. */
     const val DEFAULT_SESSION_SIZE = 10
+
+    /** Translation direction selected by default (a global preference, persisted in ScoreStore). */
+    val DEFAULT_DIRECTION = Direction.HE_TO_EN
 
     /** Category chip shown for "all themes"; also the internal meaning of a null category. */
     const val CATEGORY_ALL = "all"

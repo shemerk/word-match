@@ -61,6 +61,11 @@ fun GameScreen(state: GameState, viewModel: GameViewModel) {
     val word = state.currentWord
     val reducedMotion = rememberReducedMotion()
 
+    // Which text is the prompt (shown) vs. the answer (typed), per the resolved direction.
+    val promptText = if (state.promptIsHebrew) word?.hebrew ?: "" else word?.english ?: ""
+    val answerText = if (state.promptIsHebrew) word?.english ?: "" else word?.hebrew ?: ""
+    val answerIsHebrew = !state.promptIsHebrew
+
     // Answer + hint reset when the word changes; answer is kept on a wrong attempt for retry.
     var answer by remember(word?.id) { mutableStateOf("") }
     // Progressive hint: each tap reveals one more leading letter. 0 = not yet asked.
@@ -105,15 +110,15 @@ fun GameScreen(state: GameState, viewModel: GameViewModel) {
             Spacer(Modifier.height(24.dp))
             Text(Ui.INSTRUCTION, fontSize = GameConfig.FONT_INSTRUCTION_SP.sp, color = MaterialTheme.colorScheme.onBackground)
             Spacer(Modifier.height(4.dp))
-            Text(Ui.LANG_HINT, fontSize = GameConfig.FONT_LANG_HINT_SP.sp, color = WarmGray)
+            Text(Ui.langHint(state.promptIsHebrew), fontSize = GameConfig.FONT_LANG_HINT_SP.sp, color = WarmGray)
 
             Spacer(Modifier.height(20.dp))
-            WordCard(wordKey = word?.id, hebrew = word?.hebrew ?: "", english = word?.english ?: "", flipped = state.forfeited, reducedMotion = reducedMotion)
+            WordCard(wordKey = word?.id, prompt = promptText, answer = answerText, flipped = state.forfeited, reducedMotion = reducedMotion)
 
             Spacer(Modifier.height(24.dp))
             when {
                 state.forfeited ->
-                    ForfeitReveal(word?.english ?: "", onGotIt = viewModel::acknowledgeForfeit)
+                    ForfeitReveal(answerText, onGotIt = viewModel::acknowledgeForfeit)
 
                 state.isAnswerCorrect == true ->
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -122,14 +127,14 @@ fun GameScreen(state: GameState, viewModel: GameViewModel) {
                     }
 
                 else -> {
-                    val english = word?.english ?: ""
                     // Never reveal the last letter, so a hint stays distinct from a forfeit.
-                    val maxReveal = (AnswerVerifier.letterCount(english) - 1).coerceAtLeast(1)
+                    val maxReveal = (AnswerVerifier.letterCount(answerText, answerIsHebrew) - 1).coerceAtLeast(1)
                     AnswerArea(
                     answer = answer,
+                    answerIsHebrew = answerIsHebrew,
                     wrong = state.isAnswerCorrect == false,
                     shakeX = shakeX,
-                    hintText = if (hintReveal > 0) AnswerVerifier.hint(english, hintReveal) else null,
+                    hintText = if (hintReveal > 0) AnswerVerifier.hint(answerText, hintReveal, answerIsHebrew) else null,
                     hintExhausted = hintReveal >= maxReveal,
                     onHint = { hintReveal = (hintReveal + 1).coerceAtMost(maxReveal) },
                     onAnswerChange = { answer = it },
@@ -177,7 +182,7 @@ private fun HeaderStats(state: GameState, reducedMotion: Boolean) {
 }
 
 @Composable
-private fun WordCard(wordKey: Int?, hebrew: String, english: String, flipped: Boolean, reducedMotion: Boolean) {
+private fun WordCard(wordKey: Int?, prompt: String, answer: String, flipped: Boolean, reducedMotion: Boolean) {
     val flip = remember { Animatable(0f) }
     // Animate ONLY the forward flip (the forfeit reveal). Any move to the front face — a new word
     // (wordKey change, which always resets forfeited to false) or reduced motion — snaps instantly,
@@ -198,13 +203,13 @@ private fun WordCard(wordKey: Int?, hebrew: String, english: String, flipped: Bo
     ) {
         val showBack = rotation > 90f
         Text(
-            text = if (showBack) english else hebrew,
+            text = if (showBack) answer else prompt,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 40.dp, horizontal = 16.dp)
                 // Un-mirror the text once the card is past the halfway point.
                 .graphicsLayer { rotationY = if (showBack) 180f else 0f }
-                .semantics { contentDescription = if (showBack) "התשובה $english" else "המילה $hebrew" },
+                .semantics { contentDescription = if (showBack) "התשובה $answer" else "המילה $prompt" },
             color = MaterialTheme.colorScheme.onPrimary,
             fontSize = GameConfig.FONT_WORD_CARD_SP.sp,
             lineHeight = GameConfig.FONT_WORD_CARD_LINE_HEIGHT_SP.sp,
@@ -217,6 +222,7 @@ private fun WordCard(wordKey: Int?, hebrew: String, english: String, flipped: Bo
 @Composable
 private fun AnswerArea(
     answer: String,
+    answerIsHebrew: Boolean,
     wrong: Boolean,
     shakeX: Float,
     hintText: String?,
@@ -236,9 +242,14 @@ private fun AnswerArea(
         singleLine = true,
         // Password keyboard type suppresses the autocomplete/suggestion strip (spoilers).
         // No PasswordVisualTransformation -> text stays visible plaintext.
+        // Caveat: some OEM keyboards force a Latin layout on password fields, which blocks Hebrew
+        // input. If that shows up on a device for EN→HE, switch to KeyboardType.Text here.
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false),
-        // Answer is English -> left-to-right text inside the RTL screen.
-        textStyle = TextStyle(fontSize = GameConfig.FONT_INPUT_SP.sp, textDirection = TextDirection.Ltr),
+        // English answer -> LTR; Hebrew answer -> RTL, inside the RTL screen.
+        textStyle = TextStyle(
+            fontSize = GameConfig.FONT_INPUT_SP.sp,
+            textDirection = if (answerIsHebrew) TextDirection.Rtl else TextDirection.Ltr
+        ),
         placeholder = { Text(Ui.INPUT_PLACEHOLDER, color = WarmGray) }
     )
 
@@ -249,9 +260,10 @@ private fun AnswerArea(
     ) {
         TextButton(onClick = onHint, enabled = !hintExhausted) { Text(Ui.HINT, fontSize = GameConfig.FONT_BUTTON_SP.sp) }
         if (hintText != null) {
-            // ⁦..⁩ = LTR isolate: keeps the English mask left-to-right inside the RTL row,
-            // so the revealed first letter shows on the left instead of flipping to the far right.
-            Text("${Ui.HINT_PREFIX}⁦$hintText⁩", fontSize = GameConfig.FONT_INPUT_SP.sp, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
+            // ⁦..⁩ = LTR isolate: keeps an English mask left-to-right inside the RTL row so the
+            // revealed first letter shows on the left. A Hebrew mask is already RTL — no isolate.
+            val shownHint = if (answerIsHebrew) "${Ui.HINT_PREFIX}$hintText" else "${Ui.HINT_PREFIX}⁦$hintText⁩"
+            Text(shownHint, fontSize = GameConfig.FONT_INPUT_SP.sp, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
         }
     }
 
@@ -274,10 +286,10 @@ private fun AnswerArea(
 }
 
 @Composable
-private fun ForfeitReveal(english: String, onGotIt: () -> Unit) {
+private fun ForfeitReveal(answer: String, onGotIt: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
         Text(
-            Ui.ANSWER_WAS + english,
+            Ui.ANSWER_WAS + answer,
             fontSize = GameConfig.FONT_FEEDBACK_SP.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground

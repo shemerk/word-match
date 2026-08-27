@@ -1,6 +1,7 @@
 package com.wordmatch.data
 
 import android.content.Context
+import com.wordmatch.config.Direction
 import com.wordmatch.config.GameConfig
 
 /**
@@ -24,6 +25,10 @@ interface ScoreStore {
 
     fun soundEnabled(): Boolean
     fun setSoundEnabled(on: Boolean)
+
+    /** Translation direction preference — global (not per-child), like [soundEnabled]. */
+    fun direction(): Direction
+    fun setDirection(d: Direction)
 
     /** Clears all best scores/streaks (all buckets). Sound preference is left untouched.
      *  MUST NOT touch lifetime points or the card collection — clearing high scores keeps your cards. */
@@ -79,6 +84,10 @@ class PrefsScoreStore(context: Context) : ScoreStore {
     override fun soundEnabled() = prefs.getBoolean("sound_enabled", true)
     override fun setSoundEnabled(on: Boolean) = prefs.edit().putBoolean("sound_enabled", on).apply()
 
+    override fun direction(): Direction =
+        runCatching { Direction.valueOf(prefs.getString("direction", "")!!) }.getOrDefault(GameConfig.DEFAULT_DIRECTION)
+    override fun setDirection(d: Direction) = prefs.edit().putString("direction", d.name).apply()
+
     override fun resetAll() {
         // Only the ACTIVE child's records — remove each bucket's keys (clear() would nuke both kids).
         prefs.edit().apply {
@@ -127,6 +136,10 @@ class InMemoryScoreStore(private var sound: Boolean = true) : ScoreStore {
 
     override fun soundEnabled() = sound
     override fun setSoundEnabled(on: Boolean) { sound = on }
+
+    private var direction = GameConfig.DEFAULT_DIRECTION
+    override fun direction() = direction
+    override fun setDirection(d: Direction) { direction = d }
     override fun resetAll() { scores.clear(); streaks.clear() } // points + cards untouched by design
 
     override fun totalPoints() = points

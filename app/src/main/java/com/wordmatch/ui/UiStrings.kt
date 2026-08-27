@@ -16,6 +16,11 @@ internal object Ui {
     const val SIZE_LABEL = "מספר מילים"
     const val WORDSET_LABEL = "אילו מילים"
     const val ALL_WORDS = "כל המילים"
+    // Translation-direction selector
+    const val DIRECTION_LABEL = "כיוון תרגום"
+    const val DIR_HE_EN = "עברית → אנגלית"
+    const val DIR_EN_HE = "אנגלית → עברית"
+    const val DIR_MIX = "מעורבב"
     const val START = "התחל"
     const val BEST_TO_BEAT = "שיא לשבור: "
     const val NO_RECORD = "אין שיא עדיין — קבע אחד!"
@@ -23,7 +28,6 @@ internal object Ui {
 
     // Game screen
     const val INSTRUCTION = "התרגם את המילה"
-    const val LANG_HINT = "עברית → אנגלית"
     const val INPUT_PLACEHOLDER = "תשובתך כאן"
     const val CHECK = "בדוק"
     const val FORFEIT = "מוותר"
@@ -66,6 +70,9 @@ internal object Ui {
         if (key == null) CATEGORY_ALL else CATEGORY_HE[key] ?: key
 
     fun progress(done: Int, total: Int): String = "$done/$total"
+
+    /** Language-direction hint under the instruction, matching the current word's direction. */
+    fun langHint(promptIsHebrew: Boolean): String = if (promptIsHebrew) DIR_HE_EN else DIR_EN_HE
 
     fun scoreToBeat(best: Int): String = if (best <= 0) NO_RECORD else "$BEST_TO_BEAT$best"
 

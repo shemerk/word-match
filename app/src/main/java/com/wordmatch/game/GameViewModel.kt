@@ -3,6 +3,7 @@ package com.wordmatch.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wordmatch.config.Child
+import com.wordmatch.config.Direction
 import com.wordmatch.config.GameConfig
 import com.wordmatch.data.InMemoryScoreStore
 import com.wordmatch.data.ScoreStore
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 /**
  * Owns the whole flow: START (pick theme + size) -> PLAYING (finite session) -> SUMMARY.
@@ -42,7 +44,7 @@ class GameViewModel(
         ?: GameConfig.CHILDREN.first()
 
     private val _state = MutableStateFlow(
-        GameState(soundEnabled = store.soundEnabled(), activeChildId = child.id)
+        GameState(soundEnabled = store.soundEnabled(), activeChildId = child.id, direction = store.direction())
     )
     val state: StateFlow<GameState> = _state.asStateFlow()
 
@@ -104,6 +106,19 @@ class GameViewModel(
     fun setSessionSize(size: Int) {
         _state.value = _state.value.copy(sessionSize = size)
         refreshRecords()
+    }
+
+    /** Set the translation direction (persisted globally). Takes effect on the next session. */
+    fun setDirection(d: Direction) {
+        store.setDirection(d)
+        _state.value = _state.value.copy(direction = d)
+    }
+
+    /** Resolve whether the prompt for the next word is shown in Hebrew. MIX re-rolls per word. */
+    private fun promptIsHebrew(): Boolean = when (_state.value.direction) {
+        Direction.HE_TO_EN -> true
+        Direction.EN_TO_HE -> false
+        Direction.MIX -> Random.nextBoolean()
     }
 
     private fun refreshRecords() {
@@ -169,7 +184,8 @@ class GameViewModel(
             isAnswerCorrect = null,
             forfeited = false,
             newRecord = false,
-            currentWord = pickNext(weightedPool(), null).also { lastWordId = it.id }
+            currentWord = pickNext(weightedPool(), null).also { lastWordId = it.id },
+            promptIsHebrew = promptIsHebrew()
         )
     }
 
@@ -181,7 +197,9 @@ class GameViewModel(
         if (!s.awaitingAnswer && s.isAnswerCorrect != false) return // ignore after solve/forfeit
         if (s.isAnswerCorrect == true) return
 
-        if (AnswerVerifier.isCorrect(userAnswer, word.english)) {
+        // Grade against whichever language the child was asked to type.
+        val target = if (s.promptIsHebrew) word.english else word.hebrew
+        if (AnswerVerifier.isCorrect(userAnswer, target, hebrew = !s.promptIsHebrew)) {
             if (s.soundEnabled) sound.playCorrect()
             missedIds -= word.id
             val newStreak = s.streak + 1
@@ -250,7 +268,8 @@ class GameViewModel(
             currentWord = next,
             wordsCompleted = completed,
             isAnswerCorrect = null,
-            forfeited = false
+            forfeited = false,
+            promptIsHebrew = promptIsHebrew()
         )
     }
 

@@ -1,5 +1,6 @@
 package com.wordmatch
 
+import com.wordmatch.config.Direction
 import com.wordmatch.config.GameConfig
 import com.wordmatch.data.InMemoryScoreStore
 import com.wordmatch.data.WordRepository
@@ -146,6 +147,18 @@ class GameViewModelTest {
         advanceUntilIdle()
         vm.setCategory("animals"); vm.setSessionSize(10); vm.startSession() // "A cat"
         vm.checkAnswer("cat")
+        assertEquals(true, vm.state.value.isAnswerCorrect)
+    }
+
+    @Test fun reverseDirectionGradesAgainstHebrew() = runTest {
+        val vm = vm()
+        advanceUntilIdle()
+        vm.setDirection(Direction.EN_TO_HE)
+        vm.setSessionSize(10); vm.startSession() // sequential -> apple (english "Apple", hebrew "תפוח")
+        assertFalse(vm.state.value.promptIsHebrew)
+        vm.checkAnswer("Apple")               // English is now the wrong language
+        assertEquals(false, vm.state.value.isAnswerCorrect)
+        vm.checkAnswer("תפוח")                // the Hebrew word is expected
         assertEquals(true, vm.state.value.isAnswerCorrect)
     }
 
