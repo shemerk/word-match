@@ -45,8 +45,11 @@ For a bin-only child (Roni), update just the one bare-array file.
 - `category` — lowercase English key. Reuse an existing key when it fits (see the category list in
   words.json / the CATEGORY_HE map in `ui/UiStrings.kt`). A new key falls back to showing the raw
   key, so prefer an existing one unless none fits.
-- `batch` — **all words in one add share the SAME batch = current max batch + 1.** Never edit the
-  batch of existing rows.
+- `batch` — **REQUIRED on every row.** All words in one add share the SAME batch = current max
+  batch + 1. Never edit the batch of existing rows. A file where **no** row has `batch` (all default
+  to 0) shows **no new/all selector** on the start screen — that's the bug Roni hit after a raw bulk
+  import bypassed this skill. If you find such a file, split it into batches first (oldest = 0, newest
+  add = 1) so a newest batch > 0 exists.
 
 ## Steps
 
@@ -57,8 +60,14 @@ For a bin-only child (Roni), update just the one bare-array file.
 4. Build the new item objects (ids incrementing, all with `batch = nextBatch`).
 5. Append them to the bare array in the child's `*_upload.json`.
 6. **Oren only:** append the **same** items to the `record` array in `app/src/main/assets/words.json`.
-7. Show the user the added rows and the batch number.
-8. Push the child's bare-array file to their bin (see table for the bin id):
+7. **Verify (run after ANY word add, including raw bulk imports that bypass this skill).** Confirm
+   the file parses and a newest batch > 0 exists, else the new/all selector won't appear:
+   ```powershell
+   python -c "import json,collections;f='roni_upload.json';d=json.load(open(f,encoding='utf-8'));c=collections.Counter(w.get('batch',0) for w in d);print('batch dist:',dict(c));assert max(c)>0,'NO batch>0 -> new/all selector will NOT show'"
+   ```
+   (swap `f` for `jsonbin_upload.json` for Oren; for Oren also confirm `words.json` record count matches).
+8. Show the user the added rows and the batch number.
+9. Push the child's bare-array file to their bin (see table for the bin id):
    ```powershell
    $binId = 'THE_CHILDS_BIN_ID'
    $file  = 'roni_upload.json'   # or jsonbin_upload.json for Oren
