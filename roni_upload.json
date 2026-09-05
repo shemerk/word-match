@@ -247,5 +247,22 @@
   { "id": 246, "hebrew": "שמונים", "english": "Eighty", "category": "numbers", "batch": 2 },
   { "id": 247, "hebrew": "תשעים", "english": "Ninety", "category": "numbers", "batch": 2 },
   { "id": 248, "hebrew": "מאה", "english": "One hundred", "category": "numbers", "batch": 2 },
-  { "id": 249, "hebrew": "אלף", "english": "One thousand", "category": "numbers", "batch": 2 }
+  { "id": 249, "hebrew": "אלף", "english": "One thousand", "category": "numbers", "batch": 2 },
+  { "id": 250, "hebrew": "לכתוב", "english": "To write", "category": "verbs", "batch": 3 },
+  { "id": 251, "hebrew": "לכתוב מחדש", "english": "To rewrite", "category": "verbs", "batch": 3 },
+  { "id": 252, "hebrew": "פסקה", "english": "A paragraph", "category": "grammar", "batch": 3 },
+  { "id": 253, "hebrew": "לשים", "english": "To put", "category": "verbs", "batch": 3 },
+  { "id": 254, "hebrew": "אותיות גדולות", "english": "Capital letters", "category": "grammar", "batch": 3 },
+  { "id": 255, "hebrew": "אות, מכתב", "english": "A letter", "category": "grammar", "batch": 3 },
+  { "id": 256, "hebrew": "להקיף", "english": "To circle", "category": "verbs", "batch": 3 },
+  { "id": 257, "hebrew": "מילים", "english": "Words", "category": "grammar", "batch": 3 },
+  { "id": 258, "hebrew": "להתחיל", "english": "To begin", "category": "verbs", "batch": 3 },
+  { "id": 259, "hebrew": "עם", "english": "With", "category": "prepositions", "batch": 3 },
+  { "id": 260, "hebrew": "להשלים", "english": "To complete", "category": "verbs", "batch": 3 },
+  { "id": 261, "hebrew": "לסדר, להזמין", "english": "To order", "category": "verbs", "batch": 3 },
+  { "id": 262, "hebrew": "לתקן, נכון", "english": "To correct", "category": "verbs", "batch": 3 },
+  { "id": 263, "hebrew": "משפט", "english": "A sentence", "category": "grammar", "batch": 3 },
+  { "id": 264, "hebrew": "שאלה", "english": "A question", "category": "grammar", "batch": 3 },
+  { "id": 265, "hebrew": "לענות", "english": "To answer", "category": "verbs", "batch": 3 },
+  { "id": 266, "hebrew": "פועל", "english": "A verb", "category": "grammar", "batch": 3 }
 ]

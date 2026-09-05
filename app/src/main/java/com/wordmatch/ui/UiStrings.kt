@@ -63,7 +63,8 @@ internal object Ui {
         "body" to "גוף", "clothing" to "ביגוד", "feelings" to "רגשות", "work" to "עבודה",
         "school" to "בית ספר", "music" to "מוזיקה", "people" to "אנשים", "sentences" to "משפטים",
         "names" to "שמות", "grammar" to "דקדוק", "adjectives" to "תארים", "adverbs" to "תארי פועל",
-        "prepositions" to "מילות יחס", "seasons" to "עונות", "transport" to "תחבורה", "shapes" to "צורות"
+        "prepositions" to "מילות יחס", "seasons" to "עונות", "transport" to "תחבורה", "shapes" to "צורות",
+        "letters" to "אותיות"
     )
 
     fun categoryLabel(key: String?): String =
