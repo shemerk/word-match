@@ -1,137 +1,1059 @@
 {
   "record": [
-    {"id": 1, "hebrew": "יש", "english": "Has", "category": "verbs"},
-    {"id": 2, "hebrew": "חתול", "english": "A cat", "category": "animals"},
-    {"id": 3, "hebrew": "לאורן יש חתול", "english": "Oren has a cat", "category": "sentences"},
-    {"id": 4, "hebrew": "זאת, זה", "english": "It is", "category": "grammar"},
-    {"id": 5, "hebrew": "רשת", "english": "A net", "category": "objects", "batch": 3},
-    {"id": 6, "hebrew": "אוהל", "english": "A tent", "category": "objects"},
-    {"id": 7, "hebrew": "במחנה", "english": "At camp", "category": "places"},
-    {"id": 8, "hebrew": "יכול", "english": "Can", "category": "verbs"},
-    {"id": 9, "hebrew": "ורוד", "english": "Pink", "category": "colors"},
-    {"id": 10, "hebrew": "דיו", "english": "Ink", "category": "objects"},
-    {"id": 11, "hebrew": "פח", "english": "A bin", "category": "objects"},
-    {"id": 12, "hebrew": "תפוח", "english": "Apple", "category": "fruits"},
-    {"id": 13, "hebrew": "פיל", "english": "Elephant", "category": "animals"},
-    {"id": 14, "hebrew": "איגלו", "english": "Igloo", "category": "places"},
-    {"id": 15, "hebrew": "אורן", "english": "Oren", "category": "names"},
-    {"id": 16, "hebrew": "מטריה", "english": "Umbrella", "category": "objects"},
-    {"id": 17, "hebrew": "לשיר", "english": "To sing", "category": "verbs"},
-    {"id": 18, "hebrew": "מלך", "english": "A king", "category": "people"},
-    {"id": 19, "hebrew": "תיק", "english": "A bag", "category": "objects"},
-    {"id": 20, "hebrew": "להקה", "english": "A band", "category": "music"},
-    {"id": 21, "hebrew": "פעמון", "english": "A bell", "category": "objects"},
-    {"id": 22, "hebrew": "שחור", "english": "Black", "category": "colors"},
-    {"id": 23, "hebrew": "רגליים", "english": "Legs", "category": "body"},
-    {"id": 24, "hebrew": "שעון", "english": "A clock", "category": "objects"},
-    {"id": 25, "hebrew": "מלכה", "english": "Queen", "category": "people", "batch": 3},
-    {"id": 26, "hebrew": "בוחן", "english": "Quiz", "category": "school", "batch": 3},
-    {"id": 27, "hebrew": "מהר", "english": "Quickly", "category": "adverbs", "batch": 3},
-    {"id": 28, "hebrew": "להיכנס", "english": "To enter", "category": "verbs"},
-    {"id": 29, "hebrew": "אצבעות", "english": "Fingers", "category": "body"},
-    {"id": 30, "hebrew": "שמן", "english": "Fat", "category": "adjectives"},
-    {"id": 31, "hebrew": "מושלם", "english": "Perfect", "category": "adjectives"},
-    {"id": 32, "hebrew": "ג'קט", "english": "A jacket", "category": "clothing", "batch": 3},
-    {"id": 33, "hebrew": "לעשות ריצה קלה", "english": "To jog", "category": "verbs"},
-    {"id": 34, "hebrew": "עבודה", "english": "A job", "category": "work"},
-    {"id": 35, "hebrew": "לדן יש עבודה", "english": "Dan has a job", "category": "sentences"},
-    {"id": 36, "hebrew": "להנות", "english": "To enjoy", "category": "verbs"},
-    {"id": 37, "hebrew": "גן חיות", "english": "A zoo", "category": "places"},
-    {"id": 38, "hebrew": "אפס", "english": "Zero", "category": "numbers"},
-    {"id": 39, "hebrew": "זיגזג", "english": "Zigzag", "category": "shapes"},
-    {"id": 40, "hebrew": "שמש", "english": "Sun", "category": "nature"},
-    {"id": 41, "hebrew": "אוטובוס", "english": "A bus", "category": "transport"},
-    {"id": 42, "hebrew": "מתחת", "english": "Under", "category": "prepositions", "batch": 3},
-    {"id": 43, "hebrew": "קיץ", "english": "Summer", "category": "seasons", "batch": 3},
-    {"id": 44, "hebrew": "ברווזים", "english": "Ducks", "category": "animals"},
-    {"id": 45, "hebrew": "לרוץ", "english": "To run", "category": "verbs"},
-    {"id": 46, "hebrew": "לקפוץ", "english": "To jump", "category": "verbs"},
-    {"id": 47, "hebrew": "למעלה", "english": "Up", "category": "prepositions"},
-    {"id": 48, "hebrew": "וילה", "english": "A villa", "category": "places"},
-    {"id": 49, "hebrew": "ווטרינר", "english": "A vet", "category": "work"},
-    {"id": 50, "hebrew": "אהבה, אוהב", "english": "Love", "category": "feelings"},
-    {"id": 51, "hebrew": "לגור, לחיות", "english": "To live", "category": "verbs", "batch": 3},
-    {"id": 52, "hebrew": "אני גר ברמת גן", "english": "I live in Ramat-Gan", "category": "sentences"},
-    {"id": 53, "hebrew": "כן", "english": "Yes", "category": "grammar"},
-    {"id": 54, "hebrew": "לצעוק", "english": "To yell", "category": "verbs", "batch": 3},
-    {"id": 55, "hebrew": "צהוב", "english": "Yellow", "category": "colors"},
-    {"id": 56, "hebrew": "יום", "english": "A day", "category": "time", "batch": 4},
-    {"id": 57, "hebrew": "לשחק, לנגן", "english": "To play", "category": "verbs", "batch": 4},
-    {"id": 58, "hebrew": "יום ראשון", "english": "Sunday", "category": "time"},
-    {"id": 59, "hebrew": "שמח", "english": "Happy", "category": "feelings"},
-    {"id": 60, "hebrew": "מצחיק", "english": "Funny", "category": "adjectives"},
-    {"id": 61, "hebrew": "רעב", "english": "Hungry", "category": "adjectives", "batch": 3},
-    {"id": 62, "hebrew": "שמיים", "english": "Sky", "category": "nature"},
-    {"id": 63, "hebrew": "לטוס", "english": "To fly", "category": "verbs"},
-    {"id": 64, "hebrew": "לבכות", "english": "To cry", "category": "verbs"},
-    {"id": 65, "hebrew": "קופסה", "english": "A box", "category": "objects"},
-    {"id": 66, "hebrew": "שועל", "english": "A fox", "category": "animals"},
-    {"id": 67, "hebrew": "מונית", "english": "A taxi", "category": "transport"},
-    {"id": 68, "hebrew": "לתקן", "english": "To fix", "category": "verbs", "batch": 3},
-    {"id": 69, "hebrew": "חורף", "english": "Winter", "category": "seasons"},
-    {"id": 70, "hebrew": "חלון", "english": "A window", "category": "objects"},
-    {"id": 71, "hebrew": "רוח", "english": "Wind", "category": "nature"},
-    {"id": 72, "hebrew": "רטוב", "english": "Wet", "category": "adjectives", "batch": 3},
-    {"id": 73, "hebrew": "היה, הייתה", "english": "Was", "category": "grammar", "batch": 3},
-    {"id": 74, "hebrew": "רוצה", "english": "Want", "category": "verbs", "batch": 3},
-    {"id": 75, "hebrew": "לשלוח", "english": "To send", "category": "verbs", "batch": 3},
-    {"id": 76, "hebrew": "חול", "english": "Sand", "category": "nature", "batch": 3},
-    {"id": 77, "hebrew": "סוף", "english": "End", "category": "grammar", "batch": 3},
-    {"id": 78, "hebrew": "ו...", "english": "And", "category": "grammar", "batch": 3},
-    {"id": 79, "hebrew": "לבקר", "english": "To visit", "category": "verbs", "batch": 3},
-    {"id": 80, "hebrew": "חיות", "english": "Animals", "category": "animals", "batch": 1},
-    {"id": 81, "hebrew": "קר", "english": "Cold", "category": "adjectives", "batch": 1},
-    {"id": 82, "hebrew": "לנסות", "english": "To try", "category": "verbs", "batch": 3},
-    {"id": 83, "hebrew": "שלי", "english": "My", "category": "grammar", "batch": 1},
-    {"id": 84, "hebrew": "לומר", "english": "To say", "category": "verbs", "batch": 4},
-    {"id": 85, "hebrew": "לשלם", "english": "To pay", "category": "verbs", "batch": 4},
-    {"id": 86, "hebrew": "גור כלבים", "english": "A puppy", "category": "animals", "batch": 3},
-    {"id": 87, "hebrew": "כועס", "english": "Angry", "category": "feelings", "batch": 1},
-    {"id": 88, "hebrew": "בכושר", "english": "Fit", "category": "adjectives", "batch": 3},
-    {"id": 89, "hebrew": "אני בכושר", "english": "I am fit", "category": "sentences", "batch": 3},
-    {"id": 90, "hebrew": "לטגן", "english": "To fry", "category": "verbs", "batch": 1},
-    {"id": 91, "hebrew": "אתמול", "english": "Yesterday", "category": "time", "batch": 3},
-    {"id": 92, "hebrew": "חופשה", "english": "A holiday", "category": "time", "batch": 1},
-    {"id": 93, "hebrew": "להישאר", "english": "To stay", "category": "verbs", "batch": 4},
-    {"id": 94, "hebrew": "חזק", "english": "Strong", "category": "adjectives", "batch": 1},
-    {"id": 95, "hebrew": "ילדים", "english": "Children", "category": "people", "batch": 1},
-    {"id": 96, "hebrew": "צ'יפס", "english": "Chips", "category": "food", "batch": 1},
-    {"id": 97, "hebrew": "מטבח", "english": "A kitchen", "category": "places", "batch": 1},
-    {"id": 98, "hebrew": "לצפות בטלוויזיה", "english": "To watch TV", "category": "verbs", "batch": 1},
-    {"id": 99, "hebrew": "ערוץ", "english": "A channel", "category": "objects", "batch": 4},
-    {"id": 100, "hebrew": "מה", "english": "What", "category": "grammar", "batch": 4},
-    {"id": 101, "hebrew": "אחרי", "english": "After", "category": "prepositions", "batch": 1},
-    {"id": 102, "hebrew": "ארוחת צהריים", "english": "Lunch", "category": "food", "batch": 1},
-    {"id": 103, "hebrew": "נקניקייה", "english": "A hotdog", "category": "food", "batch": 1},
-    {"id": 104, "hebrew": "לחמנייה", "english": "A bun", "category": "food", "batch": 1},
-    {"id": 105, "hebrew": "ב", "english": "In", "category": "prepositions", "batch": 1},
-    {"id": 106, "hebrew": "בשביל", "english": "For", "category": "prepositions", "batch": 1},
-    {"id": 107, "hebrew": "מזל", "english": "Luck", "category": "feelings", "batch": 2},
-    {"id": 108, "hebrew": "איפה", "english": "Where", "category": "grammar", "batch": 2},
-    {"id": 109, "hebrew": "סלט", "english": "Salad", "category": "food", "batch": 2},
-    {"id": 110, "hebrew": "לצפות", "english": "To watch", "category": "verbs", "batch": 2},
-    {"id": 111, "hebrew": "מתי", "english": "When", "category": "grammar", "batch": 4},
-    {"id": 112, "hebrew": "אני", "english": "I", "category": "grammar", "batch": 2},
-    {"id": 113, "hebrew": "טוב", "english": "Good", "category": "adjectives", "batch": 2},
-    {"id": 114, "hebrew": "אוכל", "english": "Food", "category": "food", "batch": 2},
-    {"id": 115, "hebrew": "אוכל טוב", "english": "Good food", "category": "food", "batch": 2},
-    {"id": 116, "hebrew": "בריכה", "english": "A pool", "category": "places", "batch": 2},
-    {"id": 117, "hebrew": "חדר", "english": "A room", "category": "places", "batch": 2},
-    {"id": 118, "hebrew": "להסתכל", "english": "To look", "category": "verbs", "batch": 2},
-    {"id": 119, "hebrew": "צהריים", "english": "Noon", "category": "time", "batch": 2},
-    {"id": 120, "hebrew": "אחרי הצהריים", "english": "Afternoon", "category": "time", "batch": 2},
-    {"id": 121, "hebrew": "קריר, מגניב", "english": "Cool", "category": "adjectives", "batch": 2},
-    {"id": 122, "hebrew": "בקרוב", "english": "Soon", "category": "time", "batch": 4},
-    {"id": 123, "hebrew": "ירח", "english": "The moon", "category": "nature", "batch": 2},
-    {"id": 124, "hebrew": "פודל", "english": "A poodle", "category": "animals", "batch": 2},
-    {"id": 125, "hebrew": "ספר", "english": "A book", "category": "objects", "batch": 2},
-    {"id": 126, "hebrew": "יש", "english": "There is", "category": "grammar", "batch": 4},
-    {"id": 127, "hebrew": "להריח", "english": "To sniff", "category": "verbs", "batch": 4},
-    {"id": 128, "hebrew": "לברוח", "english": "To run away", "category": "verbs", "batch": 4},
-    {"id": 129, "hebrew": "וואי", "english": "Yy", "category": "letters", "batch": 3},
-    {"id": 130, "hebrew": "ג'י", "english": "Gg", "category": "letters", "batch": 3},
-    {"id": 131, "hebrew": "הייתי בלונדון", "english": "I was in London", "category": "sentences", "batch": 3},
-    {"id": 132, "hebrew": "עם", "english": "With", "category": "prepositions", "batch": 4},
-    {"id": 133, "hebrew": "לתוך", "english": "Into", "category": "prepositions", "batch": 4}
+    {
+      "id": 1,
+      "hebrew": "יש",
+      "english": "Has",
+      "category": "verbs"
+    },
+    {
+      "id": 2,
+      "hebrew": "חתול",
+      "english": "A cat",
+      "category": "animals"
+    },
+    {
+      "id": 3,
+      "hebrew": "לאורן יש חתול",
+      "english": "Oren has a cat",
+      "category": "sentences"
+    },
+    {
+      "id": 4,
+      "hebrew": "זאת, זה",
+      "english": "It is",
+      "category": "grammar"
+    },
+    {
+      "id": 5,
+      "hebrew": "רשת",
+      "english": "A net",
+      "category": "objects",
+      "batch": 3
+    },
+    {
+      "id": 6,
+      "hebrew": "אוהל",
+      "english": "A tent",
+      "category": "objects"
+    },
+    {
+      "id": 7,
+      "hebrew": "במחנה",
+      "english": "At camp",
+      "category": "places"
+    },
+    {
+      "id": 8,
+      "hebrew": "יכול",
+      "english": "Can",
+      "category": "verbs"
+    },
+    {
+      "id": 9,
+      "hebrew": "ורוד",
+      "english": "Pink",
+      "category": "colors"
+    },
+    {
+      "id": 10,
+      "hebrew": "דיו",
+      "english": "Ink",
+      "category": "objects"
+    },
+    {
+      "id": 11,
+      "hebrew": "פח",
+      "english": "A bin",
+      "category": "objects"
+    },
+    {
+      "id": 12,
+      "hebrew": "תפוח",
+      "english": "Apple",
+      "category": "fruits"
+    },
+    {
+      "id": 13,
+      "hebrew": "פיל",
+      "english": "Elephant",
+      "category": "animals"
+    },
+    {
+      "id": 14,
+      "hebrew": "איגלו",
+      "english": "Igloo",
+      "category": "places"
+    },
+    {
+      "id": 15,
+      "hebrew": "אורן",
+      "english": "Oren",
+      "category": "names"
+    },
+    {
+      "id": 16,
+      "hebrew": "מטריה",
+      "english": "Umbrella",
+      "category": "objects"
+    },
+    {
+      "id": 17,
+      "hebrew": "לשיר",
+      "english": "To sing",
+      "category": "verbs"
+    },
+    {
+      "id": 18,
+      "hebrew": "מלך",
+      "english": "A king",
+      "category": "people"
+    },
+    {
+      "id": 19,
+      "hebrew": "תיק",
+      "english": "A bag",
+      "category": "objects"
+    },
+    {
+      "id": 20,
+      "hebrew": "להקה",
+      "english": "A band",
+      "category": "music"
+    },
+    {
+      "id": 21,
+      "hebrew": "פעמון",
+      "english": "A bell",
+      "category": "objects"
+    },
+    {
+      "id": 22,
+      "hebrew": "שחור",
+      "english": "Black",
+      "category": "colors"
+    },
+    {
+      "id": 23,
+      "hebrew": "רגליים",
+      "english": "Legs",
+      "category": "body"
+    },
+    {
+      "id": 24,
+      "hebrew": "שעון",
+      "english": "A clock",
+      "category": "objects"
+    },
+    {
+      "id": 25,
+      "hebrew": "מלכה",
+      "english": "Queen",
+      "category": "people",
+      "batch": 3
+    },
+    {
+      "id": 26,
+      "hebrew": "בוחן",
+      "english": "Quiz",
+      "category": "school",
+      "batch": 3
+    },
+    {
+      "id": 27,
+      "hebrew": "מהר",
+      "english": "Quickly",
+      "category": "adverbs",
+      "batch": 3
+    },
+    {
+      "id": 28,
+      "hebrew": "להיכנס",
+      "english": "To enter",
+      "category": "verbs"
+    },
+    {
+      "id": 29,
+      "hebrew": "אצבעות",
+      "english": "Fingers",
+      "category": "body"
+    },
+    {
+      "id": 30,
+      "hebrew": "שמן",
+      "english": "Fat",
+      "category": "adjectives"
+    },
+    {
+      "id": 31,
+      "hebrew": "מושלם",
+      "english": "Perfect",
+      "category": "adjectives"
+    },
+    {
+      "id": 32,
+      "hebrew": "ג'קט",
+      "english": "A jacket",
+      "category": "clothing",
+      "batch": 3
+    },
+    {
+      "id": 33,
+      "hebrew": "לעשות ריצה קלה",
+      "english": "To jog",
+      "category": "verbs"
+    },
+    {
+      "id": 34,
+      "hebrew": "עבודה",
+      "english": "A job",
+      "category": "work"
+    },
+    {
+      "id": 35,
+      "hebrew": "לדן יש עבודה",
+      "english": "Dan has a job",
+      "category": "sentences"
+    },
+    {
+      "id": 36,
+      "hebrew": "להנות",
+      "english": "To enjoy",
+      "category": "verbs"
+    },
+    {
+      "id": 37,
+      "hebrew": "גן חיות",
+      "english": "A zoo",
+      "category": "places"
+    },
+    {
+      "id": 38,
+      "hebrew": "אפס",
+      "english": "Zero",
+      "category": "numbers"
+    },
+    {
+      "id": 39,
+      "hebrew": "זיגזג",
+      "english": "Zigzag",
+      "category": "shapes"
+    },
+    {
+      "id": 40,
+      "hebrew": "שמש",
+      "english": "Sun",
+      "category": "nature"
+    },
+    {
+      "id": 41,
+      "hebrew": "אוטובוס",
+      "english": "A bus",
+      "category": "transport"
+    },
+    {
+      "id": 42,
+      "hebrew": "מתחת",
+      "english": "Under",
+      "category": "prepositions",
+      "batch": 3
+    },
+    {
+      "id": 43,
+      "hebrew": "קיץ",
+      "english": "Summer",
+      "category": "seasons",
+      "batch": 3
+    },
+    {
+      "id": 44,
+      "hebrew": "ברווזים",
+      "english": "Ducks",
+      "category": "animals"
+    },
+    {
+      "id": 45,
+      "hebrew": "לרוץ",
+      "english": "To run",
+      "category": "verbs"
+    },
+    {
+      "id": 46,
+      "hebrew": "לקפוץ",
+      "english": "To jump",
+      "category": "verbs"
+    },
+    {
+      "id": 47,
+      "hebrew": "למעלה",
+      "english": "Up",
+      "category": "prepositions"
+    },
+    {
+      "id": 48,
+      "hebrew": "וילה",
+      "english": "A villa",
+      "category": "places"
+    },
+    {
+      "id": 49,
+      "hebrew": "ווטרינר",
+      "english": "A vet",
+      "category": "work"
+    },
+    {
+      "id": 50,
+      "hebrew": "אהבה, אוהב",
+      "english": "Love",
+      "category": "feelings"
+    },
+    {
+      "id": 51,
+      "hebrew": "לגור, לחיות",
+      "english": "To live",
+      "category": "verbs",
+      "batch": 3
+    },
+    {
+      "id": 52,
+      "hebrew": "אני גר ברמת גן",
+      "english": "I live in Ramat-Gan",
+      "category": "sentences"
+    },
+    {
+      "id": 53,
+      "hebrew": "כן",
+      "english": "Yes",
+      "category": "grammar"
+    },
+    {
+      "id": 54,
+      "hebrew": "לצעוק",
+      "english": "To yell",
+      "category": "verbs",
+      "batch": 3
+    },
+    {
+      "id": 55,
+      "hebrew": "צהוב",
+      "english": "Yellow",
+      "category": "colors"
+    },
+    {
+      "id": 56,
+      "hebrew": "יום",
+      "english": "A day",
+      "category": "time",
+      "batch": 4
+    },
+    {
+      "id": 57,
+      "hebrew": "לשחק, לנגן",
+      "english": "To play",
+      "category": "verbs",
+      "batch": 4
+    },
+    {
+      "id": 58,
+      "hebrew": "יום ראשון",
+      "english": "Sunday",
+      "category": "time"
+    },
+    {
+      "id": 59,
+      "hebrew": "שמח",
+      "english": "Happy",
+      "category": "feelings"
+    },
+    {
+      "id": 60,
+      "hebrew": "מצחיק",
+      "english": "Funny",
+      "category": "adjectives"
+    },
+    {
+      "id": 61,
+      "hebrew": "רעב",
+      "english": "Hungry",
+      "category": "adjectives",
+      "batch": 3
+    },
+    {
+      "id": 62,
+      "hebrew": "שמיים",
+      "english": "Sky",
+      "category": "nature"
+    },
+    {
+      "id": 63,
+      "hebrew": "לטוס",
+      "english": "To fly",
+      "category": "verbs"
+    },
+    {
+      "id": 64,
+      "hebrew": "לבכות",
+      "english": "To cry",
+      "category": "verbs"
+    },
+    {
+      "id": 65,
+      "hebrew": "קופסה",
+      "english": "A box",
+      "category": "objects"
+    },
+    {
+      "id": 66,
+      "hebrew": "שועל",
+      "english": "A fox",
+      "category": "animals"
+    },
+    {
+      "id": 67,
+      "hebrew": "מונית",
+      "english": "A taxi",
+      "category": "transport"
+    },
+    {
+      "id": 68,
+      "hebrew": "לתקן",
+      "english": "To fix",
+      "category": "verbs",
+      "batch": 3
+    },
+    {
+      "id": 69,
+      "hebrew": "חורף",
+      "english": "Winter",
+      "category": "seasons"
+    },
+    {
+      "id": 70,
+      "hebrew": "חלון",
+      "english": "A window",
+      "category": "objects"
+    },
+    {
+      "id": 71,
+      "hebrew": "רוח",
+      "english": "Wind",
+      "category": "nature"
+    },
+    {
+      "id": 72,
+      "hebrew": "רטוב",
+      "english": "Wet",
+      "category": "adjectives",
+      "batch": 3
+    },
+    {
+      "id": 73,
+      "hebrew": "היה, הייתה",
+      "english": "Was",
+      "category": "grammar",
+      "batch": 3
+    },
+    {
+      "id": 74,
+      "hebrew": "רוצה",
+      "english": "Want",
+      "category": "verbs",
+      "batch": 3
+    },
+    {
+      "id": 75,
+      "hebrew": "לשלוח",
+      "english": "To send",
+      "category": "verbs",
+      "batch": 3
+    },
+    {
+      "id": 76,
+      "hebrew": "חול",
+      "english": "Sand",
+      "category": "nature",
+      "batch": 3
+    },
+    {
+      "id": 77,
+      "hebrew": "סוף",
+      "english": "End",
+      "category": "grammar",
+      "batch": 3
+    },
+    {
+      "id": 78,
+      "hebrew": "ו...",
+      "english": "And",
+      "category": "grammar",
+      "batch": 3
+    },
+    {
+      "id": 79,
+      "hebrew": "לבקר",
+      "english": "To visit",
+      "category": "verbs",
+      "batch": 3
+    },
+    {
+      "id": 80,
+      "hebrew": "חיות",
+      "english": "Animals",
+      "category": "animals",
+      "batch": 1
+    },
+    {
+      "id": 81,
+      "hebrew": "קר",
+      "english": "Cold",
+      "category": "adjectives",
+      "batch": 1
+    },
+    {
+      "id": 82,
+      "hebrew": "לנסות",
+      "english": "To try",
+      "category": "verbs",
+      "batch": 3
+    },
+    {
+      "id": 83,
+      "hebrew": "שלי",
+      "english": "My",
+      "category": "grammar",
+      "batch": 1
+    },
+    {
+      "id": 84,
+      "hebrew": "לומר",
+      "english": "To say",
+      "category": "verbs",
+      "batch": 4
+    },
+    {
+      "id": 85,
+      "hebrew": "לשלם",
+      "english": "To pay",
+      "category": "verbs",
+      "batch": 4
+    },
+    {
+      "id": 86,
+      "hebrew": "גור כלבים",
+      "english": "A puppy",
+      "category": "animals",
+      "batch": 3
+    },
+    {
+      "id": 87,
+      "hebrew": "כועס",
+      "english": "Angry",
+      "category": "feelings",
+      "batch": 1
+    },
+    {
+      "id": 88,
+      "hebrew": "בכושר",
+      "english": "Fit",
+      "category": "adjectives",
+      "batch": 3
+    },
+    {
+      "id": 89,
+      "hebrew": "אני בכושר",
+      "english": "I am fit",
+      "category": "sentences",
+      "batch": 3
+    },
+    {
+      "id": 90,
+      "hebrew": "לטגן",
+      "english": "To fry",
+      "category": "verbs",
+      "batch": 1
+    },
+    {
+      "id": 91,
+      "hebrew": "אתמול",
+      "english": "Yesterday",
+      "category": "time",
+      "batch": 3
+    },
+    {
+      "id": 92,
+      "hebrew": "חופשה",
+      "english": "A holiday",
+      "category": "time",
+      "batch": 1
+    },
+    {
+      "id": 93,
+      "hebrew": "להישאר",
+      "english": "To stay",
+      "category": "verbs",
+      "batch": 4
+    },
+    {
+      "id": 94,
+      "hebrew": "חזק",
+      "english": "Strong",
+      "category": "adjectives",
+      "batch": 1
+    },
+    {
+      "id": 95,
+      "hebrew": "ילדים",
+      "english": "Children",
+      "category": "people",
+      "batch": 1
+    },
+    {
+      "id": 96,
+      "hebrew": "צ'יפס",
+      "english": "Chips",
+      "category": "food",
+      "batch": 1
+    },
+    {
+      "id": 97,
+      "hebrew": "מטבח",
+      "english": "A kitchen",
+      "category": "places",
+      "batch": 1
+    },
+    {
+      "id": 98,
+      "hebrew": "לצפות בטלוויזיה",
+      "english": "To watch TV",
+      "category": "verbs",
+      "batch": 1
+    },
+    {
+      "id": 99,
+      "hebrew": "ערוץ",
+      "english": "A channel",
+      "category": "objects",
+      "batch": 4
+    },
+    {
+      "id": 100,
+      "hebrew": "מה",
+      "english": "What",
+      "category": "grammar",
+      "batch": 4
+    },
+    {
+      "id": 101,
+      "hebrew": "אחרי",
+      "english": "After",
+      "category": "prepositions",
+      "batch": 1
+    },
+    {
+      "id": 102,
+      "hebrew": "ארוחת צהריים",
+      "english": "Lunch",
+      "category": "food",
+      "batch": 1
+    },
+    {
+      "id": 103,
+      "hebrew": "נקניקייה",
+      "english": "A hotdog",
+      "category": "food",
+      "batch": 1
+    },
+    {
+      "id": 104,
+      "hebrew": "לחמנייה",
+      "english": "A bun",
+      "category": "food",
+      "batch": 1
+    },
+    {
+      "id": 105,
+      "hebrew": "ב",
+      "english": "In",
+      "category": "prepositions",
+      "batch": 1
+    },
+    {
+      "id": 106,
+      "hebrew": "בשביל",
+      "english": "For",
+      "category": "prepositions",
+      "batch": 1
+    },
+    {
+      "id": 107,
+      "hebrew": "מזל",
+      "english": "Luck",
+      "category": "feelings",
+      "batch": 2
+    },
+    {
+      "id": 108,
+      "hebrew": "איפה",
+      "english": "Where",
+      "category": "grammar",
+      "batch": 2
+    },
+    {
+      "id": 109,
+      "hebrew": "סלט",
+      "english": "Salad",
+      "category": "food",
+      "batch": 2
+    },
+    {
+      "id": 110,
+      "hebrew": "לצפות",
+      "english": "To watch",
+      "category": "verbs",
+      "batch": 2
+    },
+    {
+      "id": 111,
+      "hebrew": "מתי",
+      "english": "When",
+      "category": "grammar",
+      "batch": 4
+    },
+    {
+      "id": 112,
+      "hebrew": "אני",
+      "english": "I",
+      "category": "grammar",
+      "batch": 2
+    },
+    {
+      "id": 113,
+      "hebrew": "טוב",
+      "english": "Good",
+      "category": "adjectives",
+      "batch": 2
+    },
+    {
+      "id": 114,
+      "hebrew": "אוכל",
+      "english": "Food",
+      "category": "food",
+      "batch": 2
+    },
+    {
+      "id": 115,
+      "hebrew": "אוכל טוב",
+      "english": "Good food",
+      "category": "food",
+      "batch": 2
+    },
+    {
+      "id": 116,
+      "hebrew": "בריכה",
+      "english": "A pool",
+      "category": "places",
+      "batch": 2
+    },
+    {
+      "id": 117,
+      "hebrew": "חדר",
+      "english": "A room",
+      "category": "places",
+      "batch": 2
+    },
+    {
+      "id": 118,
+      "hebrew": "להסתכל",
+      "english": "To look",
+      "category": "verbs",
+      "batch": 2
+    },
+    {
+      "id": 119,
+      "hebrew": "צהריים",
+      "english": "Noon",
+      "category": "time",
+      "batch": 2
+    },
+    {
+      "id": 120,
+      "hebrew": "אחרי הצהריים",
+      "english": "Afternoon",
+      "category": "time",
+      "batch": 2
+    },
+    {
+      "id": 121,
+      "hebrew": "קריר, מגניב",
+      "english": "Cool",
+      "category": "adjectives",
+      "batch": 2
+    },
+    {
+      "id": 122,
+      "hebrew": "בקרוב",
+      "english": "Soon",
+      "category": "time",
+      "batch": 4
+    },
+    {
+      "id": 123,
+      "hebrew": "ירח",
+      "english": "The moon",
+      "category": "nature",
+      "batch": 2
+    },
+    {
+      "id": 124,
+      "hebrew": "פודל",
+      "english": "A poodle",
+      "category": "animals",
+      "batch": 2
+    },
+    {
+      "id": 125,
+      "hebrew": "ספר",
+      "english": "A book",
+      "category": "objects",
+      "batch": 2
+    },
+    {
+      "id": 126,
+      "hebrew": "יש",
+      "english": "There is",
+      "category": "grammar",
+      "batch": 4
+    },
+    {
+      "id": 127,
+      "hebrew": "להריח",
+      "english": "To sniff",
+      "category": "verbs",
+      "batch": 4
+    },
+    {
+      "id": 128,
+      "hebrew": "לברוח",
+      "english": "To run away",
+      "category": "verbs",
+      "batch": 4
+    },
+    {
+      "id": 129,
+      "hebrew": "וואי",
+      "english": "Yy",
+      "category": "letters",
+      "batch": 3
+    },
+    {
+      "id": 130,
+      "hebrew": "ג'י",
+      "english": "Gg",
+      "category": "letters",
+      "batch": 3
+    },
+    {
+      "id": 131,
+      "hebrew": "הייתי בלונדון",
+      "english": "I was in London",
+      "category": "sentences",
+      "batch": 3
+    },
+    {
+      "id": 132,
+      "hebrew": "עם",
+      "english": "With",
+      "category": "prepositions",
+      "batch": 4
+    },
+    {
+      "id": 133,
+      "hebrew": "לתוך",
+      "english": "Into",
+      "category": "prepositions",
+      "batch": 4
+    },
+    {
+      "id": 134,
+      "hebrew": "כסף מזומן",
+      "english": "Cash",
+      "category": "objects",
+      "batch": 5
+    },
+    {
+      "id": 135,
+      "hebrew": "חדש",
+      "english": "New",
+      "category": "adjectives",
+      "batch": 5
+    },
+    {
+      "id": 136,
+      "hebrew": "לקנות",
+      "english": "To buy",
+      "category": "verbs",
+      "batch": 5
+    },
+    {
+      "id": 137,
+      "hebrew": "בוא נלך",
+      "english": "Let's go",
+      "category": "sentences",
+      "batch": 5
+    },
+    {
+      "id": 138,
+      "hebrew": "ספינה",
+      "english": "A ship",
+      "category": "transport",
+      "batch": 5
+    },
+    {
+      "id": 139,
+      "hebrew": "זה הוא",
+      "english": "It's",
+      "category": "grammar",
+      "batch": 5
+    },
+    {
+      "id": 140,
+      "hebrew": "כדור",
+      "english": "A ball",
+      "category": "objects",
+      "batch": 5
+    },
+    {
+      "id": 141,
+      "hebrew": "קטן",
+      "english": "Small",
+      "category": "adjectives",
+      "batch": 5
+    },
+    {
+      "id": 142,
+      "hebrew": "גבוה",
+      "english": "Tall",
+      "category": "adjectives",
+      "batch": 5
+    },
+    {
+      "id": 143,
+      "hebrew": "אני גבוה",
+      "english": "I am tall",
+      "category": "sentences",
+      "batch": 5
+    },
+    {
+      "id": 144,
+      "hebrew": "לאורן יש כדור ורוד",
+      "english": "Oren has a pink ball",
+      "category": "sentences",
+      "batch": 5
+    },
+    {
+      "id": 145,
+      "hebrew": "להתקשר",
+      "english": "To call",
+      "category": "verbs",
+      "batch": 5
+    },
+    {
+      "id": 146,
+      "hebrew": "קיר",
+      "english": "A wall",
+      "category": "objects",
+      "batch": 5
+    },
+    {
+      "id": 147,
+      "hebrew": "קניון",
+      "english": "A mall",
+      "category": "places",
+      "batch": 5
+    },
+    {
+      "id": 148,
+      "hebrew": "אורן ישב על קיר",
+      "english": "Oren sat on a wall",
+      "category": "sentences",
+      "batch": 5
+    },
+    {
+      "id": 149,
+      "hebrew": "מה יש בתיק?",
+      "english": "What is in the bag?",
+      "category": "sentences",
+      "batch": 5
+    },
+    {
+      "id": 150,
+      "hebrew": "חנות",
+      "english": "A shop",
+      "category": "places",
+      "batch": 5
+    },
+    {
+      "id": 151,
+      "hebrew": "קניות",
+      "english": "Shopping",
+      "category": "objects",
+      "batch": 5
+    },
+    {
+      "id": 152,
+      "hebrew": "בוא נלך לעשות קניות",
+      "english": "Let's go shopping",
+      "category": "sentences",
+      "batch": 5
+    },
+    {
+      "id": 153,
+      "hebrew": "שמפו",
+      "english": "Shampoo",
+      "category": "objects",
+      "batch": 5
+    },
+    {
+      "id": 154,
+      "hebrew": "מדף",
+      "english": "A shelf",
+      "category": "objects",
+      "batch": 5
+    },
+    {
+      "id": 155,
+      "hebrew": "מברשת",
+      "english": "A brush",
+      "category": "objects",
+      "batch": 5
+    },
+    {
+      "id": 156,
+      "hebrew": "נמוך",
+      "english": "Short",
+      "category": "adjectives",
+      "batch": 5
+    },
+    {
+      "id": 157,
+      "hebrew": "דג",
+      "english": "A fish",
+      "category": "animals",
+      "batch": 5
+    },
+    {
+      "id": 158,
+      "hebrew": "דגים",
+      "english": "Fish",
+      "category": "animals",
+      "batch": 5
+    },
+    {
+      "id": 159,
+      "hebrew": "שלה",
+      "english": "Her",
+      "category": "grammar",
+      "batch": 5
+    }
   ]
 }
