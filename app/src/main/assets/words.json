@@ -878,105 +878,105 @@
       "hebrew": "כסף מזומן",
       "english": "Cash",
       "category": "objects",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 135,
       "hebrew": "חדש",
       "english": "New",
       "category": "adjectives",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 136,
       "hebrew": "לקנות",
       "english": "To buy",
       "category": "verbs",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 137,
       "hebrew": "בוא נלך",
       "english": "Let's go",
       "category": "sentences",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 138,
       "hebrew": "ספינה",
       "english": "A ship",
       "category": "transport",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 139,
       "hebrew": "זה הוא",
       "english": "It's",
       "category": "grammar",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 140,
       "hebrew": "כדור",
       "english": "A ball",
       "category": "objects",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 141,
       "hebrew": "קטן",
       "english": "Small",
       "category": "adjectives",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 142,
       "hebrew": "גבוה",
       "english": "Tall",
       "category": "adjectives",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 143,
       "hebrew": "אני גבוה",
       "english": "I am tall",
       "category": "sentences",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 144,
       "hebrew": "לאורן יש כדור ורוד",
       "english": "Oren has a pink ball",
       "category": "sentences",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 145,
       "hebrew": "להתקשר",
       "english": "To call",
       "category": "verbs",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 146,
       "hebrew": "קיר",
       "english": "A wall",
       "category": "objects",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 147,
       "hebrew": "קניון",
       "english": "A mall",
       "category": "places",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 148,
       "hebrew": "אורן ישב על קיר",
       "english": "Oren sat on a wall",
       "category": "sentences",
-      "batch": 5
+      "batch": 6
     },
     {
       "id": 149,
