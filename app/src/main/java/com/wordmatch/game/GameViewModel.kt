@@ -26,15 +26,14 @@ import kotlin.random.Random
  * Shows the Hebrew word, checks the English answer, tracks streak/score, and persists the best
  * score/streak to beat per session-size bucket.
  *
- * [pickNext] is injectable so tests can force a deterministic order.
+ * Words are dealt from a shuffled deck so none repeats until the whole pool has been shown.
+ * [shuffle] is injectable so tests can force a deterministic order.
  */
 class GameViewModel(
     private val repository: WordRepository,
     private val sound: SoundManager = NoOpSoundManager(),
     private val store: ScoreStore = InMemoryScoreStore(),
-    private val pickNext: (words: List<WordItem>, lastId: Int?) -> WordItem = { words, lastId ->
-        if (words.size == 1) words[0] else words.filter { it.id != lastId }.random()
-    },
+    private val shuffle: (words: List<WordItem>) -> List<WordItem> = { it.shuffled() },
     // Which unowned card to award when a points threshold is crossed. Injectable for deterministic tests.
     private val pickCard: (unowned: List<Int>) -> Int = { it.random() }
 ) : ViewModel() {
@@ -52,12 +51,17 @@ class GameViewModel(
     private var newestBatch: Int = 0                  // highest batch present; > 0 means "new words" exist
     private var pool: List<WordItem> = emptyList()   // words for the active session (filtered)
     private var lastWordId: Int? = null
-    // Words answered wrong this session; drawn at higher probability until solved (in-memory only).
-    private val missedIds = mutableSetOf<Int>()
+    private val deck = ArrayDeque<WordItem>()        // words still to deal this pass
 
-    /** Draw pool with missed words duplicated so they reappear sooner (see MISSED_WORD_WEIGHT). */
-    private fun weightedPool(): List<WordItem> =
-        pool.flatMap { w -> if (w.id in missedIds) List(GameConfig.MISSED_WORD_WEIGHT) { w } else listOf(w) }
+    /** Deal the next word. An empty deck refills with a fresh shuffle of the pool, rotated so a
+     *  new pass never opens on the word just shown. */
+    private fun drawNext(): WordItem {
+        if (deck.isEmpty()) {
+            deck.addAll(shuffle(pool))
+            if (deck.size > 1 && deck.first().id == lastWordId) deck.addLast(deck.removeFirst())
+        }
+        return deck.removeFirst().also { lastWordId = it.id }
+    }
 
     init { load() }
 
@@ -173,7 +177,7 @@ class GameViewModel(
         }
         if (pool.isEmpty()) return
         lastWordId = null
-        missedIds.clear()
+        deck.clear()
         _state.value = s.copy(
             screen = Screen.PLAYING,
             score = 0,
@@ -184,7 +188,7 @@ class GameViewModel(
             isAnswerCorrect = null,
             forfeited = false,
             newRecord = false,
-            currentWord = pickNext(weightedPool(), null).also { lastWordId = it.id },
+            currentWord = drawNext(),
             promptIsHebrew = promptIsHebrew()
         )
     }
@@ -201,7 +205,6 @@ class GameViewModel(
         val target = if (s.promptIsHebrew) word.english else word.hebrew
         if (AnswerVerifier.isCorrect(userAnswer, target, hebrew = !s.promptIsHebrew)) {
             if (s.soundEnabled) sound.playCorrect()
-            missedIds -= word.id
             val newStreak = s.streak + 1
             // Base points (minus a per-hint penalty, floored) + a capped bonus for the run already
             // going (see GameConfig.streakBonus). Hints discount the base only, never the bonus.
@@ -234,7 +237,6 @@ class GameViewModel(
             }
         } else {
             if (s.soundEnabled) sound.playWrong()
-            missedIds += word.id
             _state.value = s.copy(isAnswerCorrect = false, streak = 0, checkNonce = s.checkNonce + 1)
         }
     }
@@ -252,8 +254,11 @@ class GameViewModel(
         refreshCards()
     }
 
-    /** "Got it!" after a forfeit reveal. */
-    fun acknowledgeForfeit() = advance()
+    /** "Got it!" after a forfeit reveal. The unsolved word goes back into the deck a few cards ahead. */
+    fun acknowledgeForfeit() {
+        _state.value.currentWord?.let { deck.add(minOf(GameConfig.FORFEIT_REQUEUE_GAP, deck.size), it) }
+        advance()
+    }
 
     private fun advance() {
         val s = _state.value
@@ -262,8 +267,7 @@ class GameViewModel(
             endSession(completed)
             return
         }
-        val next = pickNext(weightedPool(), lastWordId)
-        lastWordId = next.id
+        val next = drawNext()
         _state.value = s.copy(
             currentWord = next,
             wordsCompleted = completed,

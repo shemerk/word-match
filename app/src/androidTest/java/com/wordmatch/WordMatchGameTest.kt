@@ -62,10 +62,7 @@ class WordMatchGameTest {
 
     private fun buildViewModel(): GameViewModel {
         val words = loadTestWords()
-        val sequential: (List<WordItem>, Int?) -> WordItem = { list, lastId ->
-            val idx = list.indexOfFirst { it.id == lastId } // -1 when lastId == null -> first word
-            list[(idx + 1) % list.size]
-        }
+        val sequential: (List<WordItem>) -> List<WordItem> = { it } // deal in list order
         // Pre-own the first card so a full 10-word session (170 lifetime pts, one 100-pt line) never
         // pops the card-win reveal over the UI mid-flow — these tests assert on the game, not the album.
         val store = InMemoryScoreStore().apply { unlockCard(1) }

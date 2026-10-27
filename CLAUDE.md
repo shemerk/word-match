@@ -37,7 +37,7 @@ adb shell am start -n com.wordmatch/.MainActivity
 
 Single-activity Compose app. No DI framework — `MainActivity` constructs everything by hand and holds it in a `GameViewModel` via a `ViewModelProvider.Factory` (survives rotation).
 
-**State & flow** — `GameViewModel` owns the entire app flow through one `StateFlow<GameState>`. `GameState.screen` (`Screen.START | PLAYING | SUMMARY | ALBUM`) is the top-level router that `MainScreen` switches on. There is no navigation library. In-play status is expressed by booleans on `GameState` (`isAnswerCorrect: Boolean?`, `forfeited`) plus `checkNonce` (bumped on every answer so the UI can re-fire confetti/shake even on a repeated result). A session is finite: `startSession()` filters the word pool by category, then `advance()` counts `wordsCompleted` up to `sessionSize` before routing to `SUMMARY`.
+**State & flow** — `GameViewModel` owns the entire app flow through one `StateFlow<GameState>`. `GameState.screen` (`Screen.START | PLAYING | SUMMARY | ALBUM`) is the top-level router that `MainScreen` switches on. There is no navigation library. In-play status is expressed by booleans on `GameState` (`isAnswerCorrect: Boolean?`, `forfeited`) plus `checkNonce` (bumped on every answer so the UI can re-fire confetti/shake even on a repeated result). A session is finite: `startSession()` filters the word pool by category, then deals words from a shuffled deck (no repeats until the pool is exhausted; a forfeited word is re-inserted `FORFEIT_REQUEUE_GAP` cards ahead) while `advance()` counts `wordsCompleted` up to `sessionSize` before routing to `SUMMARY`.
 
 **Category filter is plumbed but unrendered** — `GameState.category`, `setCategory()`, the `startSession` filter and `Ui.CATEGORY_HE` (24 Hebrew theme labels) all exist and work, but **no composable calls `setCategory`**, so `category` is always `null` and every session draws from the whole pool. An earlier StartScreen had a theme picker; it was dropped when the size/batch chip rows took over the screen. Leave the plumbing or wire a chip row back up — don't "clean up the dead code" without asking, it's a deliberately parked feature.
 
@@ -67,10 +67,10 @@ Single-activity Compose app. No DI framework — `MainActivity` constructs every
 ## Testing
 
 Two suites, deliberately split (user chose "JVM logic now, instrumentation later"):
-- `src/test/` — pure-JVM logic (`AnswerVerifierTest`, `GameViewModelTest`). `GameViewModelTest` drives the ViewModel with a fake repo, `InMemoryScoreStore`, an injected sequential `pickNext` for determinism, and `StandardTestDispatcher`.
+- `src/test/` — pure-JVM logic (`AnswerVerifierTest`, `GameViewModelTest`). `GameViewModelTest` drives the ViewModel with a fake repo, `InMemoryScoreStore`, an identity `shuffle` (deal in list order) for determinism, and `StandardTestDispatcher`.
 - `src/androidTest/` — 8 Compose UI flows in `WordMatchGameTest`, loading the deterministic 5-word `src/androidTest/assets/words_test.json`. They build a `GameViewModel` with an injected sequential picker so "next word" is reproducible, and drive through the start screen. Assertions match on literal Hebrew text / the `answerInput` test tag.
 
-`GameViewModel`'s constructor exposes `sound`, `store`, `pickNext`, and `pickCard` seams specifically so both suites can inject test doubles (`pickCard` makes card awards deterministic). `WordMatchGameTest` pre-owns one card in its store so a full session's lifetime points can't pop the card-win reveal over the UI mid-flow.
+`GameViewModel`'s constructor exposes `sound`, `store`, `shuffle`, and `pickCard` seams specifically so both suites can inject test doubles (`pickCard` makes card awards deterministic). `WordMatchGameTest` pre-owns one card in its store so a full session's lifetime points can't pop the card-win reveal over the UI mid-flow.
 
 ## External resources
 

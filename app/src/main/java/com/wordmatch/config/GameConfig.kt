@@ -58,10 +58,10 @@ object GameConfig {
     /** Category chip shown for "all themes"; also the internal meaning of a null category. */
     const val CATEGORY_ALL = "all"
 
-    /** How many times a wrongly-answered word is entered into the draw pool while unsolved, making
-     *  it more likely to reappear until the child gets it right (in-memory, per session). 1 = no
-     *  weighting; 3 = a missed word is ~3x as likely as an unmissed one. */
-    const val MISSED_WORD_WEIGHT = 3
+    /** After a forfeit ("show answer"), the unsolved word is put back into the shuffled deck this
+     *  many words ahead, so it returns soon in the same session (in-memory). 0 = immediately next;
+     *  larger = later. Ignored if fewer words remain in the current pass (goes to the end). */
+    const val FORFEIT_REQUEUE_GAP = 4
 
     /**
      * Leading words stripped from BOTH sides before comparing an English answer, so a child may

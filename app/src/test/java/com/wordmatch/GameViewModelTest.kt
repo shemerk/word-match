@@ -44,10 +44,13 @@ class GameViewModelTest {
         override fun playLevelUp() { levelUp++ }
     }
 
-    // Deterministic order: next word after lastId in list order (wraps).
-    private val sequential: (List<WordItem>, Int?) -> WordItem = { list, lastId ->
-        val idx = list.indexOfFirst { it.id == lastId }
-        list[(idx + 1) % list.size]
+    // Deterministic order: the deck is dealt in list order (no shuffle).
+    private val sequential: (List<WordItem>) -> List<WordItem> = { it }
+
+    // Solve the current word (triggers auto-advance once the dispatcher runs).
+    private fun GameViewModel.answerCorrectly() {
+        val s = state.value
+        checkAnswer(if (s.promptIsHebrew) s.currentWord!!.english else s.currentWord!!.hebrew)
     }
 
     // Deterministic card award: always the lowest unowned id.
@@ -241,6 +244,29 @@ class GameViewModelTest {
         vm.forfeit(); vm.acknowledgeForfeit(); advanceUntilIdle()
         assertFalse(vm.state.value.newRecord)
         assertEquals(22, store.bestScore(2))
+    }
+
+    @Test fun realShuffleShowsEveryWordBeforeAnyRepeats() = runTest {
+        val words = (1..6).map { WordItem(it, "w$it", "מ$it", "x") }
+        val vm = GameViewModel(FakeRepo(words), CountingSound(), InMemoryScoreStore()) // default shuffle
+        advanceUntilIdle()
+        vm.setSessionSize(10); vm.startSession()
+        val seen = mutableListOf<Int>()
+        repeat(9) { seen += vm.state.value.currentWord!!.id; vm.answerCorrectly(); advanceUntilIdle() }
+        assertEquals(6, seen.take(6).toSet().size)                        // first pass: no repeats
+        assertTrue(seen.zipWithNext().none { (a, b) -> a == b })          // never back-to-back
+    }
+
+    @Test fun forfeitedWordReturnsAfterRequeueGap() = runTest {
+        val words = (1..8).map { WordItem(it, "w$it", "מ$it", "x") }
+        val vm = GameViewModel(FakeRepo(words), CountingSound(), InMemoryScoreStore(), sequential)
+        advanceUntilIdle()
+        vm.setSessionSize(10); vm.startSession()
+        vm.forfeit(); vm.acknowledgeForfeit()                             // give up on word 1
+        val next = (1..GameConfig.FORFEIT_REQUEUE_GAP + 1).map {
+            vm.state.value.currentWord!!.id.also { vm.answerCorrectly(); advanceUntilIdle() }
+        }
+        assertEquals(1, next.last())                                     // back right after the gap
     }
 
     @Test fun crossingPointsThresholdAwardsACard() = runTest {
