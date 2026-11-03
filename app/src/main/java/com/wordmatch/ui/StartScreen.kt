@@ -29,6 +29,7 @@ import com.wordmatch.config.Direction
 import com.wordmatch.config.GameConfig
 import com.wordmatch.game.GameViewModel
 import com.wordmatch.model.GameState
+import com.wordmatch.model.WordSet
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -77,13 +78,18 @@ fun StartScreen(state: GameState, viewModel: GameViewModel, onSettings: () -> Un
         Spacer(Modifier.height(12.dp))
         AlbumButton(state, onClick = viewModel::openAlbum)
 
-        // Word-set selector — only when a newer batch has been added (defaults to "new words").
-        if (state.hasNewBatch) {
+        // Word-set selector — only when a newer batch or reinforce words exist (defaults to "new words").
+        if (state.hasNewBatch || state.reinforceCount > 0) {
             Spacer(Modifier.height(24.dp))
             SectionLabel(Ui.WORDSET_LABEL)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                SelectChip(Ui.newWords(state.newBatchCount), selected = state.newOnly) { viewModel.setNewOnly(true) }
-                SelectChip(Ui.ALL_WORDS, selected = !state.newOnly) { viewModel.setNewOnly(false) }
+                if (state.hasNewBatch) {
+                    SelectChip(Ui.newWords(state.newBatchCount), selected = state.wordSet == WordSet.NEW) { viewModel.setWordSet(WordSet.NEW) }
+                }
+                SelectChip(Ui.ALL_WORDS, selected = state.wordSet == WordSet.ALL) { viewModel.setWordSet(WordSet.ALL) }
+                if (state.reinforceCount > 0) {
+                    SelectChip(Ui.reinforce(state.reinforceCount), selected = state.wordSet == WordSet.REINFORCE) { viewModel.setWordSet(WordSet.REINFORCE) }
+                }
             }
         }
 

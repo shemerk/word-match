@@ -11,7 +11,10 @@ data class WordItem(
     val category: String = "",
     // Batch this word was added in. 0 = original bundled set. The highest batch present is "new
     // words"; adding a newer batch auto-demotes the previous one. Gson defaults missing to 0.
-    val batch: Int = 0
+    val batch: Int = 0,
+    // Hand-picked for the "חיזוק" (reinforce) set. Independent of batch; set/cleared manually in
+    // the word files. Gson defaults missing to false.
+    val reinforce: Boolean = false
 )
 
 /** JSONBin.io (and our bundled asset) wrap the list in a "record" object. */
@@ -21,6 +24,9 @@ data class JsonBinResponse(
 
 /** Which top-level screen is showing. */
 enum class Screen { START, PLAYING, SUMMARY, ALBUM }
+
+/** Start-screen word-set selector: newest batch, whole bank, or the hand-picked reinforce words. */
+enum class WordSet { NEW, ALL, REINFORCE }
 
 data class GameState(
     val screen: Screen = Screen.START,
@@ -37,11 +43,12 @@ data class GameState(
     val sessionSize: Int = GameConfig.DEFAULT_SESSION_SIZE,
     // Translation direction (start-screen selection, persisted globally). MIX resolves per word.
     val direction: Direction = GameConfig.DEFAULT_DIRECTION,
-    // New-words selector: shown only when a batch > 0 exists; defaults to New. When true the session
-    // pool is restricted to the newest batch (see GameViewModel.startSession).
+    // Word-set selector: shown when a batch > 0 or a reinforce word exists; defaults to New when a
+    // new batch exists. Restricts the session pool (see GameViewModel.startSession).
     val hasNewBatch: Boolean = false,
     val newBatchCount: Int = 0,                    // how many words are in the newest batch
-    val newOnly: Boolean = false,                  // true = play only the newest batch
+    val reinforceCount: Int = 0,                   // how many words are flagged reinforce
+    val wordSet: WordSet = WordSet.ALL,
 
     // In-session play
     val currentWord: WordItem? = null,

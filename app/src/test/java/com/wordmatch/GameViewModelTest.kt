@@ -7,6 +7,7 @@ import com.wordmatch.data.WordRepository
 import com.wordmatch.game.GameViewModel
 import com.wordmatch.model.Screen
 import com.wordmatch.model.WordItem
+import com.wordmatch.model.WordSet
 import com.wordmatch.util.SoundManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -105,7 +106,7 @@ class GameViewModelTest {
         val s = vm.state.value
         assertTrue(s.hasNewBatch)
         assertEquals(2, s.newBatchCount) // both batch-3 words
-        assertTrue(s.newOnly)            // defaults to New when a batch exists
+        assertEquals(WordSet.NEW, s.wordSet) // defaults to New when a batch exists
 
         vm.setSessionSize(10); vm.startSession()
         // Play both new words; the old (batch 0) word must never appear.
@@ -118,19 +119,35 @@ class GameViewModelTest {
         advanceUntilIdle()
         val s = vm.state.value
         assertFalse(s.hasNewBatch)
-        assertFalse(s.newOnly)
+        assertEquals(WordSet.ALL, s.wordSet)
     }
 
-    @Test fun newOnlyFalseUsesWholeBank() = runTest {
+    @Test fun allWordSetUsesWholeBank() = runTest {
         val old = WordItem(1, "old", "ישן", "x", batch = 0)
         val new1 = WordItem(2, "new1", "חדש", "x", batch = 1)
         val vm = vm(words = listOf(old, new1))
         advanceUntilIdle()
-        vm.setNewOnly(false)
+        vm.setWordSet(WordSet.ALL)
         vm.setSessionSize(10); vm.startSession()
         // sequential picker starts at index 0 -> the old word is reachable again.
         vm.checkAnswer("new1"); advanceUntilIdle()
         assertEquals(1, vm.state.value.currentWord?.id) // wrapped back to the old word
+    }
+
+    @Test fun reinforceWordSetLimitsPoolToFlaggedWords() = runTest {
+        val plain = WordItem(1, "plain", "רגיל", "x", batch = 1)
+        val hard1 = WordItem(2, "hard1", "קשה1", "x", batch = 0, reinforce = true)
+        val hard2 = WordItem(3, "hard2", "קשה2", "x", batch = 1, reinforce = true)
+        val vm = vm(words = listOf(plain, hard1, hard2))
+        advanceUntilIdle()
+        assertEquals(2, vm.state.value.reinforceCount)
+        vm.setWordSet(WordSet.REINFORCE)
+        vm.setSessionSize(10); vm.startSession()
+        assertEquals(2, vm.state.value.currentWord?.id)
+        vm.checkAnswer("hard1"); advanceUntilIdle()
+        assertEquals(3, vm.state.value.currentWord?.id)
+        vm.checkAnswer("hard2"); advanceUntilIdle()
+        assertEquals(2, vm.state.value.currentWord?.id) // wrapped within the flagged pair, never "plain"
     }
 
     @Test fun correctAnswerScoresStreakAndCorrectCount() = runTest {

@@ -12,6 +12,7 @@ import com.wordmatch.model.Deck
 import com.wordmatch.model.GameState
 import com.wordmatch.model.Screen
 import com.wordmatch.model.WordItem
+import com.wordmatch.model.WordSet
 import com.wordmatch.util.NoOpSoundManager
 import com.wordmatch.util.SoundManager
 import kotlinx.coroutines.delay
@@ -79,7 +80,8 @@ class GameViewModel(
                     category = null,   // reset — a stale category may not exist in the new dictionary
                     hasNewBatch = hasNew,
                     newBatchCount = allWords.count { it.batch == newestBatch },
-                    newOnly = hasNew   // default to the newest batch when one exists
+                    reinforceCount = allWords.count { it.reinforce },
+                    wordSet = if (hasNew) WordSet.NEW else WordSet.ALL   // default to the newest batch when one exists
                 )
                 refreshRecords()
                 refreshCards()
@@ -102,9 +104,9 @@ class GameViewModel(
         _state.value = _state.value.copy(category = category)
     }
 
-    /** Toggle between the newest batch ("new words") and the whole bank. */
-    fun setNewOnly(newOnly: Boolean) {
-        _state.value = _state.value.copy(newOnly = newOnly)
+    /** Pick the word set: newest batch ("new words"), the whole bank, or the reinforce words. */
+    fun setWordSet(wordSet: WordSet) {
+        _state.value = _state.value.copy(wordSet = wordSet)
     }
 
     fun setSessionSize(size: Int) {
@@ -171,7 +173,8 @@ class GameViewModel(
     fun startSession() {
         val s = _state.value
         pool = when {
-            s.newOnly && newestBatch > 0 -> allWords.filter { it.batch == newestBatch }
+            s.wordSet == WordSet.NEW && newestBatch > 0 -> allWords.filter { it.batch == newestBatch }
+            s.wordSet == WordSet.REINFORCE -> allWords.filter { it.reinforce }
             s.category == null -> allWords
             else -> allWords.filter { it.category == s.category }
         }

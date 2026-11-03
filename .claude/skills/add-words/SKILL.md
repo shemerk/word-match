@@ -51,6 +51,10 @@ For a bin-only child (Roni), update just the one bare-array file.
   import bypassed this skill. If you find such a file, split it into batches first (oldest = 0, newest
   add = 1) so a newest batch > 0 exists.
 
+- `reinforce` — optional, `true` puts the word in the "חיזוק" (reinforce) set. Independent of
+  `batch`. To tag/untag **existing** words, set or remove the field on those rows only (keep ids and
+  batches as-is), then sync + upload the same way. Omit the field rather than writing `false`.
+
 ## Steps
 
 1. Determine the target child (see table above) and their file(s) + bin id.

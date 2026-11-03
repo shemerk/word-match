@@ -83,6 +83,9 @@ internal object Ui {
     /** "New words" chip label with the newest-batch count, e.g. "מילים חדשות (12)". */
     fun newWords(count: Int): String = "מילים חדשות ($count)"
 
+    /** "Reinforce" chip label with the flagged-word count, e.g. "חיזוק (7)". */
+    fun reinforce(count: Int): String = "חיזוק ($count)"
+
     // ---- Card album ----
 
     const val ALBUM_BUTTON = "אלבום הכרטיסים"

@@ -34,7 +34,8 @@
     "id": 6,
     "hebrew": "אוהל",
     "english": "A tent",
-    "category": "objects"
+    "category": "objects",
+    "reinforce": true
   },
   {
     "id": 7,
@@ -142,14 +143,16 @@
     "id": 24,
     "hebrew": "שעון",
     "english": "A clock",
-    "category": "objects"
+    "category": "objects",
+    "reinforce": true
   },
   {
     "id": 25,
     "hebrew": "מלכה",
     "english": "Queen",
     "category": "people",
-    "batch": 3
+    "batch": 3,
+    "reinforce": true
   },
   {
     "id": 26,
@@ -181,7 +184,8 @@
     "id": 30,
     "hebrew": "שמן",
     "english": "Fat",
-    "category": "adjectives"
+    "category": "adjectives",
+    "reinforce": true
   },
   {
     "id": 31,
@@ -200,7 +204,8 @@
     "id": 33,
     "hebrew": "לעשות ריצה קלה",
     "english": "To jog",
-    "category": "verbs"
+    "category": "verbs",
+    "reinforce": true
   },
   {
     "id": 34,
@@ -218,7 +223,8 @@
     "id": 36,
     "hebrew": "להנות",
     "english": "To enjoy",
-    "category": "verbs"
+    "category": "verbs",
+    "reinforce": true
   },
   {
     "id": 37,
@@ -255,7 +261,8 @@
     "hebrew": "מתחת",
     "english": "Under",
     "category": "prepositions",
-    "batch": 3
+    "batch": 3,
+    "reinforce": true
   },
   {
     "id": 43,
@@ -464,7 +471,8 @@
     "hebrew": "לשלוח",
     "english": "To send",
     "category": "verbs",
-    "batch": 3
+    "batch": 3,
+    "reinforce": true
   },
   {
     "id": 76,
@@ -534,7 +542,8 @@
     "hebrew": "לשלם",
     "english": "To pay",
     "category": "verbs",
-    "batch": 4
+    "batch": 4,
+    "reinforce": true
   },
   {
     "id": 86,
@@ -569,7 +578,8 @@
     "hebrew": "לטגן",
     "english": "To fry",
     "category": "verbs",
-    "batch": 1
+    "batch": 1,
+    "reinforce": true
   },
   {
     "id": 91,
@@ -618,7 +628,8 @@
     "hebrew": "מטבח",
     "english": "A kitchen",
     "category": "places",
-    "batch": 1
+    "batch": 1,
+    "reinforce": true
   },
   {
     "id": 98,
@@ -688,7 +699,8 @@
     "hebrew": "מזל",
     "english": "Luck",
     "category": "feelings",
-    "batch": 2
+    "batch": 2,
+    "reinforce": true
   },
   {
     "id": 108,
@@ -772,7 +784,8 @@
     "hebrew": "צהריים",
     "english": "Noon",
     "category": "time",
-    "batch": 2
+    "batch": 2,
+    "reinforce": true
   },
   {
     "id": 120,
@@ -786,14 +799,16 @@
     "hebrew": "קריר, מגניב",
     "english": "Cool",
     "category": "adjectives",
-    "batch": 2
+    "batch": 2,
+    "reinforce": true
   },
   {
     "id": 122,
     "hebrew": "בקרוב",
     "english": "Soon",
     "category": "time",
-    "batch": 4
+    "batch": 4,
+    "reinforce": true
   },
   {
     "id": 123,
@@ -821,7 +836,8 @@
     "hebrew": "יש",
     "english": "There is",
     "category": "grammar",
-    "batch": 4
+    "batch": 4,
+    "reinforce": true
   },
   {
     "id": 127,
@@ -863,14 +879,16 @@
     "hebrew": "עם",
     "english": "With",
     "category": "prepositions",
-    "batch": 4
+    "batch": 4,
+    "reinforce": true
   },
   {
     "id": 133,
     "hebrew": "לתוך",
     "english": "Into",
     "category": "prepositions",
-    "batch": 4
+    "batch": 4,
+    "reinforce": true
   },
   {
     "id": 134,
@@ -891,7 +909,8 @@
     "hebrew": "לקנות",
     "english": "To buy",
     "category": "verbs",
-    "batch": 6
+    "batch": 7,
+    "reinforce": true
   },
   {
     "id": 137,
@@ -919,7 +938,7 @@
     "hebrew": "כדור",
     "english": "A ball",
     "category": "objects",
-    "batch": 6
+    "batch": 7
   },
   {
     "id": 141,
@@ -954,7 +973,8 @@
     "hebrew": "להתקשר",
     "english": "To call",
     "category": "verbs",
-    "batch": 6
+    "batch": 7,
+    "reinforce": true
   },
   {
     "id": 146,
@@ -1017,7 +1037,7 @@
     "hebrew": "מדף",
     "english": "A shelf",
     "category": "objects",
-    "batch": 5
+    "batch": 7
   },
   {
     "id": 155,
@@ -1031,7 +1051,8 @@
     "hebrew": "נמוך",
     "english": "Short",
     "category": "adjectives",
-    "batch": 5
+    "batch": 5,
+    "reinforce": true
   },
   {
     "id": 157,
@@ -1052,6 +1073,135 @@
     "hebrew": "שלה",
     "english": "Her",
     "category": "grammar",
-    "batch": 5
+    "batch": 5,
+    "reinforce": true
+  },
+  {
+    "id": 160,
+    "hebrew": "מספרים",
+    "english": "Numbers",
+    "category": "numbers",
+    "batch": 7,
+    "reinforce": true
+  },
+  {
+    "id": 161,
+    "hebrew": "אוהדים",
+    "english": "Fans",
+    "category": "people",
+    "batch": 7
+  },
+  {
+    "id": 162,
+    "hebrew": "תסתכל על האוהדים!",
+    "english": "Look at the fans!",
+    "category": "sentences",
+    "batch": 7
+  },
+  {
+    "id": 163,
+    "hebrew": "כל, כול",
+    "english": "All",
+    "category": "grammar",
+    "batch": 7,
+    "reinforce": true
+  },
+  {
+    "id": 164,
+    "hebrew": "כל היום",
+    "english": "All day",
+    "category": "time",
+    "batch": 7,
+    "reinforce": true
+  },
+  {
+    "id": 165,
+    "hebrew": "לבעוט",
+    "english": "To kick",
+    "category": "verbs",
+    "batch": 7
+  },
+  {
+    "id": 166,
+    "hebrew": "ירוק",
+    "english": "Green",
+    "category": "colors",
+    "batch": 7
+  },
+  {
+    "id": 167,
+    "hebrew": "עץ",
+    "english": "A tree",
+    "category": "nature",
+    "batch": 7
+  },
+  {
+    "id": 168,
+    "hebrew": "לראות",
+    "english": "To see",
+    "category": "verbs",
+    "batch": 7
+  },
+  {
+    "id": 169,
+    "hebrew": "לישון",
+    "english": "To sleep",
+    "category": "verbs",
+    "batch": 7,
+    "reinforce": true
+  },
+  {
+    "id": 170,
+    "hebrew": "קרוב ל, ליד",
+    "english": "Near",
+    "category": "prepositions",
+    "batch": 7,
+    "reinforce": true
+  },
+  {
+    "id": 171,
+    "hebrew": "לקרוא",
+    "english": "To read",
+    "category": "verbs",
+    "batch": 7
+  },
+  {
+    "id": 172,
+    "hebrew": "לחלום",
+    "english": "To dream",
+    "category": "verbs",
+    "batch": 7
+  },
+  {
+    "id": 173,
+    "hebrew": "ישב",
+    "english": "Sat",
+    "category": "verbs",
+    "batch": 7,
+    "reinforce": true
+  },
+  {
+    "id": 174,
+    "hebrew": "הכדור של אורן",
+    "english": "Oren's ball",
+    "category": "sentences",
+    "batch": 7,
+    "reinforce": true
+  },
+  {
+    "id": 175,
+    "hebrew": "יש אוכל בתוך התיק",
+    "english": "There is food in the bag",
+    "category": "sentences",
+    "batch": 7,
+    "reinforce": true
+  },
+  {
+    "id": 176,
+    "hebrew": "בסדר, אוקיי",
+    "english": "OK",
+    "category": "grammar",
+    "batch": 7,
+    "reinforce": true
   }
 ]
