@@ -1204,6 +1204,111 @@
       "category": "grammar",
       "batch": 7,
       "reinforce": true
+    },
+    {
+      "id": 177,
+      "hebrew": "עמוק",
+      "english": "Deep",
+      "category": "adjectives",
+      "batch": 8
+    },
+    {
+      "id": 178,
+      "hebrew": "רחוב",
+      "english": "A street",
+      "category": "places",
+      "batch": 8
+    },
+    {
+      "id": 179,
+      "hebrew": "לצרוח",
+      "english": "To scream",
+      "category": "verbs",
+      "batch": 8
+    },
+    {
+      "id": 180,
+      "hebrew": "המלכה",
+      "english": "The queen",
+      "category": "people",
+      "batch": 8
+    },
+    {
+      "id": 181,
+      "hebrew": "יקר, יקירתי",
+      "english": "Dear",
+      "category": "adjectives",
+      "batch": 8
+    },
+    {
+      "id": 182,
+      "hebrew": "חייב",
+      "english": "Must",
+      "category": "grammar",
+      "batch": 8
+    },
+    {
+      "id": 183,
+      "hebrew": "מרפאה",
+      "english": "A clinic",
+      "category": "places",
+      "batch": 8
+    },
+    {
+      "id": 184,
+      "hebrew": "מכונית, רכב, אוטו",
+      "english": "A car",
+      "category": "transport",
+      "batch": 8
+    },
+    {
+      "id": 185,
+      "hebrew": "חשוך, כהה",
+      "english": "Dark",
+      "category": "adjectives",
+      "batch": 8
+    },
+    {
+      "id": 186,
+      "hebrew": "קשה",
+      "english": "Hard",
+      "category": "adjectives",
+      "batch": 8
+    },
+    {
+      "id": 187,
+      "hebrew": "חווה",
+      "english": "A farm",
+      "category": "places",
+      "batch": 8
+    },
+    {
+      "id": 188,
+      "hebrew": "כוכבים",
+      "english": "Stars",
+      "category": "nature",
+      "batch": 8
+    },
+    {
+      "id": 189,
+      "hebrew": "להתחיל",
+      "english": "To start",
+      "category": "verbs",
+      "batch": 8
+    },
+    {
+      "id": 190,
+      "hebrew": "לנבוח",
+      "english": "To bark",
+      "category": "verbs",
+      "batch": 8
+    },
+    {
+      "id": 191,
+      "hebrew": "כרטיס",
+      "english": "A card",
+      "category": "objects",
+      "batch": 8
     }
   ]
 }
