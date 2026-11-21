@@ -96,7 +96,8 @@
       "id": 16,
       "hebrew": "מטריה",
       "english": "Umbrella",
-      "category": "objects"
+      "category": "objects",
+      "reinforce": true
     },
     {
       "id": 17,
@@ -294,7 +295,8 @@
       "id": 47,
       "hebrew": "למעלה",
       "english": "Up",
-      "category": "prepositions"
+      "category": "prepositions",
+      "reinforce": true
     },
     {
       "id": 48,
@@ -338,7 +340,8 @@
       "hebrew": "לצעוק",
       "english": "To yell",
       "category": "verbs",
-      "batch": 3
+      "batch": 3,
+      "reinforce": true
     },
     {
       "id": 55,
@@ -389,7 +392,8 @@
       "id": 62,
       "hebrew": "שמיים",
       "english": "Sky",
-      "category": "nature"
+      "category": "nature",
+      "reinforce": true
     },
     {
       "id": 63,
@@ -401,7 +405,8 @@
       "id": 64,
       "hebrew": "לבכות",
       "english": "To cry",
-      "category": "verbs"
+      "category": "verbs",
+      "reinforce": true
     },
     {
       "id": 65,
@@ -1210,7 +1215,8 @@
       "hebrew": "עמוק",
       "english": "Deep",
       "category": "adjectives",
-      "batch": 8
+      "batch": 8,
+      "reinforce": true
     },
     {
       "id": 178,
@@ -1245,7 +1251,8 @@
       "hebrew": "חייב",
       "english": "Must",
       "category": "grammar",
-      "batch": 8
+      "batch": 8,
+      "reinforce": true
     },
     {
       "id": 183,
@@ -1309,6 +1316,104 @@
       "english": "A card",
       "category": "objects",
       "batch": 8
+    },
+    {
+      "id": 192,
+      "hebrew": "אדון",
+      "english": "Mister",
+      "category": "people",
+      "batch": 9
+    },
+    {
+      "id": 193,
+      "hebrew": "לעבוד",
+      "english": "To work",
+      "category": "verbs",
+      "batch": 9
+    },
+    {
+      "id": 194,
+      "hebrew": "להיכנס לתוך",
+      "english": "To get into",
+      "category": "verbs",
+      "batch": 9
+    },
+    {
+      "id": 195,
+      "hebrew": "להרים, לאסוף",
+      "english": "To pick up",
+      "category": "verbs",
+      "batch": 9
+    },
+    {
+      "id": 196,
+      "hebrew": "כפות רגליים",
+      "english": "Feet",
+      "category": "body",
+      "batch": 9
+    },
+    {
+      "id": 197,
+      "hebrew": "חצר",
+      "english": "A yard",
+      "category": "places",
+      "batch": 9
+    },
+    {
+      "id": 198,
+      "hebrew": "לסגור",
+      "english": "To shut",
+      "category": "verbs",
+      "batch": 9
+    },
+    {
+      "id": 199,
+      "hebrew": "תסגור את הדלת!",
+      "english": "Shut the door!",
+      "category": "sentences",
+      "batch": 9
+    },
+    {
+      "id": 200,
+      "hebrew": "לאורן יש כלב",
+      "english": "Oren has a dog",
+      "category": "sentences",
+      "batch": 9
+    },
+    {
+      "id": 201,
+      "hebrew": "יש כלב באוהל",
+      "english": "There is a dog in the tent",
+      "category": "sentences",
+      "batch": 9
+    },
+    {
+      "id": 202,
+      "hebrew": "זה הכלב של אורן",
+      "english": "It is Oren's dog",
+      "category": "sentences",
+      "batch": 9
+    },
+    {
+      "id": 203,
+      "hebrew": "כובע",
+      "english": "A hat",
+      "category": "clothing",
+      "batch": 9
+    },
+    {
+      "id": 204,
+      "hebrew": "לקום",
+      "english": "To get up",
+      "category": "verbs",
+      "batch": 9
+    },
+    {
+      "id": 205,
+      "hebrew": "אבל",
+      "english": "But",
+      "category": "grammar",
+      "batch": 9
     }
   ]
 }
